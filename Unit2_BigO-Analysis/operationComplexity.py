@@ -3,13 +3,18 @@ from random import randrange
 
 
 # test 1: list get operator. implemented as O(1), and results should reflect this
-def listIndex(alist, i):
+def listGet(alist, i):
     return alist[i]
 
 
 # test 2: dictionary get operator. implemented as O(1)
-def dictIndex(adict, i):
+def dictGet(adict, i):
     return adict[i]
+
+
+def dictSet(adict, i):
+    adict[i] = 1234
+    return adict
 
 
 # test the operations for time complexity
@@ -24,11 +29,16 @@ for listSize in range(1000, 10001, 1000):
     rand_index = randrange(0, listSize - 1)
     # test list get operator and print results
     start = time.time()
-    listIndex(numList, rand_index)
+    listGet(numList, rand_index)
     end = time.time()
     print(f"list get: {round(end - start, 12)}s | ", end='')
-    # test dict get operator and print results
+    # do the same with dict get operator
     start = time.time()
-    listIndex(numDict, rand_index)
+    dictGet(numDict, rand_index)
     end = time.time()
-    print(f"dict get: {round(end - start, 12)}s")
+    print(f"dict get: {round(end - start, 12)}s | ", end='')
+    # finally, test dict set operator
+    start = time.time()
+    dictSet(numDict, rand_index)
+    end = time.time()
+    print(f"dict set: {round(end - start, 12)}s")
