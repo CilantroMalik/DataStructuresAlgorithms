@@ -4,6 +4,7 @@ Implementation of the function findK, which finds the k-th smallest number in a 
 Utilizes merge sort, which has the same time complexity, to do most of the heavy lifting.
 """
 
+
 # parameters: the list to be processed, and the k-value that determines which smallest element to find
 def findK(alist, k):
     # sort the list in ascending order, so the smallest number is first, second smallest is second, etc

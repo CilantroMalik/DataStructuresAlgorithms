@@ -1,7 +1,12 @@
-import time
 from timeit import Timer
 from random import randrange
-# TODO add docstrings and clean up
+
+"""
+--- Operation Complexity Testing ---
+Runs timed benchmarks for various operations on Python data structures, mainly lists and dictionaries
+This exercise runs get for both lists and dicts, and set for dicts only, on varying sizes of lists,
+in order to demonstrate and verify that these operations are all O(1) as implemented in Python.
+"""
 
 
 # test 1: list get operator. implemented as O(1)

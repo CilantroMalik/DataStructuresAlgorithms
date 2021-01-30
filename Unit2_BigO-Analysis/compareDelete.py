@@ -1,6 +1,13 @@
 from timeit import Timer
 from random import randrange
 
+"""
+--- Compare Deletion (del) for Lists vs Dicts ---
+Runs a test to compare the performance of the deletion operator on a list and a dictionary.
+List del is on average O(n) because subsequent elements need to be moved, while for dicts it is O(1)
+because of the way they are implemented (i.e. as a hash table).
+"""
+
 
 def testDel(list_or_dict, i):
     del list_or_dict[i]
