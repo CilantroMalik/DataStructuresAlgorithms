@@ -1,6 +1,7 @@
 import time
 from timeit import Timer
 from random import randrange
+# TODO add docstrings and clean up
 
 
 # test 1: list get operator. implemented as O(1)
