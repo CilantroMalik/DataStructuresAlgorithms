@@ -9,10 +9,12 @@ the nature of its items. Internally uses a collection of nodes that are "linked"
 class UnorderedList:
     # -- inner class for Node --
     class Node:
-        def __init__(self, data=None, next=None):
+        # simple class with two fields and their getter and setter methods
+        def __init__(self, data=None, nextNode=None):
             self.__data = data
-            self.__next = next
+            self.__next = nextNode
 
+        # the node should be represented simply by its data
         def __repr__(self):
             return self.__data
 
@@ -28,6 +30,7 @@ class UnorderedList:
         def setNext(self, newNext):
             self.__next = newNext
 
+    # -- initializes the list with a head reference and a property to keep track of the length
     def __init__(self):
         # NOTE: in this implementation, the head reference points to the Node object of the first node of the list,
         #       and as such its next reference points to the second node of the list. This is different from some
@@ -35,22 +38,24 @@ class UnorderedList:
         self.__head = None
         self.__length = 0  # tracks size of our list
 
+    # -- creates the string representation of the list items --
     def __str__(self):
         if self.isEmpty():
             return "[]"  # a simple shortcut for a special case
         output = "["  # start with a bracket - we will build up this string
         current = self.__head
-        # traverse the list and add each item's data to the output string
-        # along with a comma to get the exact format of Python's representation
+        # traverse the list and add each item to the output string with a comma -> mimic Python's representation
         while current is not None:
             output += f"{current.getData()}, "
             current = current.getNext()
-        output = output[:-2] + "]"  # get rid of trailing comma and add bracket
+        output = output[:-2] + "]"  # get rid of trailing comma and add closing bracket
         return output
 
+    # -- checks whether the list is empty --
     def isEmpty(self):
         return self.__head is None
 
+    # -- adds an item to the front of the list (at position 0) --
     def add(self, item):
         # create a new node with its next being the current first node (the head)
         # then make the head reference point to this new first node
@@ -58,6 +63,7 @@ class UnorderedList:
         self.__head = temp
         self.__length += 1  # since we are adding an element, increment length
 
+    # -- appends an item to the end of the list (at position length-1) --
     def append(self, item):
         current = self.__head
         if self.__head is None:  # special case: list is empty
@@ -70,6 +76,7 @@ class UnorderedList:
         current.setNext(self.Node(item))  # then simply set the next node to the new one
         self.__length += 1  # since we are adding an element, increment length
 
+    # -- inserts an item into the given position in the list --
     def insert(self, pos, item):
         current = self.__head
         previous = None
@@ -89,9 +96,11 @@ class UnorderedList:
         previous.setNext(temp)
         self.__length += 1  # since we are adding an element, increment length
 
+    # -- returns the size of the list --
     def size(self):
         return self.__length  # we have been keeping track of the size
 
+    # -- checks whether or not the given item is in the list --
     def search(self, item):
         current = self.__head
         found = False
@@ -105,6 +114,7 @@ class UnorderedList:
         # the flag will still be False.
         return found
 
+    # -- returns the index of the given item in the list, or -1 if it is not found --
     def index(self, item):
         # this is a modified version of the given `search` method
         current = self.__head
@@ -115,8 +125,9 @@ class UnorderedList:
             else:
                 current = current.getNext()
                 index += 1  # when we've found the item, `index` will store its index
-        return -1  # this will supposedly never happen but it's here for completeness
+        return -1  # if the item is not found at all; similar behavior to Python list find()
 
+    # -- removes the given item from the list, or does nothing if it is not present in the list --
     def remove(self, item):
         current = self.__head
         previous = None
@@ -141,6 +152,7 @@ class UnorderedList:
             previous.setNext(current.getNext())
         self.__length -= 1  # since we are removing a node, decrement length
 
+    # -- removes and returns the first element of the list (position 0) --
     def pop(self):  # default pops the first element
         # just set the head reference to the second node, so the first node
         # now has no external reference pointing to it and so it is removed
@@ -150,6 +162,7 @@ class UnorderedList:
         self.__length -= 1  # since we are removing a node, decrement length
         return temp.getData()  # then finally return our item
 
+    # -- removes and returns the element at the given position --
     def pop(self, pos=0):
         current = self.__head
         previous = None
