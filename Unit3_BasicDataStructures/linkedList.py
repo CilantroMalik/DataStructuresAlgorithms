@@ -96,6 +96,10 @@ class UnorderedList:
         previous.setNext(temp)
         self.__length += 1  # since we are adding an element, increment length
 
+    # --- returns the first node of the list ---
+    def getHead(self):
+        return self.__head  # provides a way to access the list items outside the internal class
+
     # -- returns the size of the list --
     def size(self):
         return self.__length  # we have been keeping track of the size
