@@ -102,3 +102,51 @@ class DoublyList:
     # enables access to the length field through a method
     def size(self):
         return self.length  # we have been keeping track of this
+
+    # removes an item from the list, accounting for a number of special cases
+    def remove(self, item):
+        current = self.head
+        previous = None
+        found = False
+        # search until either current refers to the target node or we've traversed the whole list
+        while current is not None and not found:
+            if current.getData() == item:
+                found = True
+            else:
+                previous = current
+                current = current.getNext()
+        if not found:  # if the item is not present, just do nothing
+            return
+
+        # -> if there is only one element, just clear the list out
+        if self.head == self.last:
+            self.head = None
+            self.last = None
+        # -> if the target is the first element (i.e. the previous reference was never set)
+        elif previous is None:
+            # set the second node (the new first node after removal) to point back to the last, as the head shouild
+            current.getNext().setBack(self.last)
+            self.head = current.getNext()  # then update the head reference
+        # -> if the target is the last element
+        elif current == self.last:
+            previous.setNext(None)  # set the previous node to have no successor
+            self.head.setBack(previous)  # update head to point to the new last node
+            self.last = previous  # then update the last reference
+        # -> in all other cases (i.e. node is somewhere in the middle of the list)
+        else:
+            previous.setNext(current.getNext())  # skip over the target node
+            current.getNext().setBack(previous)  # have to build the connection forward and backward
+        self.length -= 1  # finally, decrement length because we are removing a node
+
+    # finds the index of an item in the list, or returns -1 if the item is not present
+    def index(self, item):
+        pos = 0
+        current = self.head
+        # loop until we have found the element or traversed the whole list
+        while current is not None:
+            if current.getData() == item:
+                return pos
+            else:
+                current = current.getNext()
+                pos += 1
+        return -1  # item not in list
