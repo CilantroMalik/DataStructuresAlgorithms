@@ -150,3 +150,49 @@ class DoublyList:
                 current = current.getNext()
                 pos += 1
         return -1  # item not in list
+
+    # removes and returns the element at the given position, or the first element by default
+    def pop(self, pos=None):
+        # if the list is empty, do nothing
+        if self.head is None:
+            return
+        # if there is only one element
+        if self.head == self.last:
+            # clear the list, but save the value so we can return it
+            temp = self.head.getData()
+            self.head = None
+            self.last = None
+            self.length -= 1  # decrement length since we are removing an element
+            return temp
+        # no argument means default -> remove first element (special case)
+        if pos is None:
+            temp = self.head.getData()  # save the data so we can return it
+            self.head.getNext().setBack(self.last)  # skip over the first node
+            self.head = self.head.getNext()  # update the head reference
+            self.length -= 1
+            return temp
+        # all other cases
+        else:
+            current = self.head
+            previous = None
+            # if not first or last position (the "normal" case)
+            if 0 < pos < self.length - 1:
+                # inchworm until we reach the desired position
+                for i in range(pos):
+                    previous = current
+                    current = current.getNext()
+                previous.setNext(current.getNext())  # skip over the node
+                current.getNext().setBack(previous)  # have to do it both ways
+                self.length -= 1  # decrement length
+                return current.getData()
+            elif pos == 0:
+                return self.pop()  # redundancy
+            elif pos == self.length - 1:  # popping at the last position (special case)
+                temp = self.last.getData()  # save the data so we can return it later
+                self.last.getBack().setNext(None)  # skip over the last node
+                self.head.setBack(self.last.getBack())  # update head to point to the new last node
+                self.last = self.last.getBack()  # then update the last reference
+                self.length -= 1  # decrement length
+                return temp
+            else:  # this means the index was out of bounds
+                return  # so just do nothing (potentially could raise an error)
