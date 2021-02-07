@@ -196,3 +196,42 @@ class DoublyList:
                 return temp
             else:  # this means the index was out of bounds
                 return  # so just do nothing (potentially could raise an error)
+
+    # adds the given item to the end of the list
+    def append(self, item):
+        temp = self.Node(item)
+        # if the list is empty, just populate the head and last references
+        if self.head is None:
+            self.head = temp
+            self.last = self.head
+            self.head.setBack(self.last)  # and set head to reference last
+        else:  # if the list is not empty
+            self.last.setNext(temp)  # add the new node onto last
+            temp.setBack(self.last)  # and complete the connection the other way
+            self.head.setBack(temp)  # then update head to reference the new last node
+            self.last = temp  # and update the last reference
+        self.length += 1  # increment length
+
+    # inserts the given item into the list at the given position
+    def insert(self, pos, item):
+        current = self.head
+        previous = None
+        # loop until `current` references the node at the desired position
+        for i in range(pos):
+            previous = current
+            current = current.getNext()
+        # if current is the first element (which means previous will be None)
+        if previous is None:
+            self.add(item)  # just defer to the add method
+            return
+        # if current is None, that means we want to insert as the last element
+        # (because the index went one further than the end of the list)
+        if current is None:
+            self.append(item)  # just defer to the append method
+            return
+        # in all other cases
+        temp = self.Node(item, current, previous)  # make the node in between current and previous
+        previous.setNext(temp)  # then complete those two connections both ways
+        current.setBack(temp)
+
+        self.length += 1  # finally, increment length
