@@ -9,7 +9,6 @@ This opens up access from both ends of the list rather than only the front and g
 class DoublyList:
     # inner class for a node in the list
     class Node:
-
         # all the methods are fairly self explanatory: initializer then getters and setters for the three fields
         def __init__(self, data, next=None, back=None):
             self.data = data
@@ -34,6 +33,8 @@ class DoublyList:
         def setBack(self, previous):
             self.back = previous
 
+    # --- UTILITY ---
+
     # initializes the list with a head reference for the first node, a last reference, and a length
     def __init__(self):
         self.head = None
@@ -55,12 +56,12 @@ class DoublyList:
         return output
 
     # prints the list in reverse, utilizing the bidirectional traversal capabilities of the list
-    def doubly_list_reverse(self):
+    def reverse_print(self):
         if self.isEmpty():
             return "[]"  # a simple shortcut for a special case
         output = "["  # start with a bracket - we will build up this string
         current = self.last
-        # traverse the list and add each item's data to the output string along with a comma
+        # traverse the list backwards and add each item's data to the output string along with a comma
         # in order to mimic the exact format of Python's representation
         while True:
             output += f"{current.getData()}, "
@@ -69,6 +70,16 @@ class DoublyList:
             current = current.getBack()
         output = output[:-2] + "]"  # get rid of trailing comma and add bracket
         return output
+
+    # simple convenience method that checks whether the list is empty
+    def isEmpty(self):
+        return self.head is None  # just check if the head is empty
+
+    # enables access to the length field through a method
+    def size(self):
+        return self.length  # we have been keeping track of this
+
+    # --- ADDING ---
 
     # adds an item to the list, handling a few special cases
     def add(self, item):
@@ -85,6 +96,47 @@ class DoublyList:
             self.head = temp  # finally, update the head reference
         self.length += 1  # increment length since we are adding an item
 
+    # adds the given item to the end of the list
+    def append(self, item):
+        temp = self.Node(item)
+        # if the list is empty, just populate the head and last references
+        if self.head is None:
+            self.head = temp
+            self.last = self.head
+            self.head.setBack(self.last)  # and set head to reference last
+        else:  # if the list is not empty
+            self.last.setNext(temp)  # add the new node onto last
+            temp.setBack(self.last)  # and complete the connection the other way
+            self.head.setBack(temp)  # then update head to reference the new last node
+            self.last = temp  # and update the last reference
+        self.length += 1  # increment length
+
+    # inserts the given item into the list at the given position
+    def insert(self, pos, item):
+        current = self.head
+        previous = None
+        # loop until `current` references the node at the desired position
+        for i in range(pos):
+            previous = current
+            current = current.getNext()
+        # if current is the first element (which means previous will be None)
+        if previous is None:
+            self.add(item)  # just defer to the add method
+            return
+        # if current is None, that means we want to insert as the last element
+        # (because the index went one further than the end of the list)
+        if current is None:
+            self.append(item)  # just defer to the append method
+            return
+        # in all other cases
+        temp = self.Node(item, current, previous)  # make the node in between current and previous
+        previous.setNext(temp)  # then complete those two connections both ways
+        current.setBack(temp)
+
+        self.length += 1  # finally, increment length
+
+    # --- SEARCHING ---
+
     # searches for an item and returns a boolean for whether or not it is in the list
     def search(self, item):
         # loop through until we find the element or traverse the entire list
@@ -95,13 +147,20 @@ class DoublyList:
             current = current.getNext()
         return False  # this will only trigger if we never found the element
 
-    # simple convenience method that checks whether the list is empty
-    def isEmpty(self):
-        return self.head is None  # just check if the head is empty
+    # finds the index of an item in the list, or returns -1 if the item is not present
+    def index(self, item):
+        pos = 0
+        current = self.head
+        # loop until we have found the element or traversed the whole list
+        while current is not None:
+            if current.getData() == item:
+                return pos
+            else:
+                current = current.getNext()
+                pos += 1
+        return -1  # item not in list
 
-    # enables access to the length field through a method
-    def size(self):
-        return self.length  # we have been keeping track of this
+    # --- REMOVING ---
 
     # removes an item from the list, accounting for a number of special cases
     def remove(self, item):
@@ -137,19 +196,6 @@ class DoublyList:
             previous.setNext(current.getNext())  # skip over the target node
             current.getNext().setBack(previous)  # have to build the connection forward and backward
         self.length -= 1  # finally, decrement length because we are removing a node
-
-    # finds the index of an item in the list, or returns -1 if the item is not present
-    def index(self, item):
-        pos = 0
-        current = self.head
-        # loop until we have found the element or traversed the whole list
-        while current is not None:
-            if current.getData() == item:
-                return pos
-            else:
-                current = current.getNext()
-                pos += 1
-        return -1  # item not in list
 
     # removes and returns the element at the given position, or the first element by default
     def pop(self, pos=None):
@@ -196,42 +242,3 @@ class DoublyList:
                 return temp
             else:  # this means the index was out of bounds
                 return  # so just do nothing (potentially could raise an error)
-
-    # adds the given item to the end of the list
-    def append(self, item):
-        temp = self.Node(item)
-        # if the list is empty, just populate the head and last references
-        if self.head is None:
-            self.head = temp
-            self.last = self.head
-            self.head.setBack(self.last)  # and set head to reference last
-        else:  # if the list is not empty
-            self.last.setNext(temp)  # add the new node onto last
-            temp.setBack(self.last)  # and complete the connection the other way
-            self.head.setBack(temp)  # then update head to reference the new last node
-            self.last = temp  # and update the last reference
-        self.length += 1  # increment length
-
-    # inserts the given item into the list at the given position
-    def insert(self, pos, item):
-        current = self.head
-        previous = None
-        # loop until `current` references the node at the desired position
-        for i in range(pos):
-            previous = current
-            current = current.getNext()
-        # if current is the first element (which means previous will be None)
-        if previous is None:
-            self.add(item)  # just defer to the add method
-            return
-        # if current is None, that means we want to insert as the last element
-        # (because the index went one further than the end of the list)
-        if current is None:
-            self.append(item)  # just defer to the append method
-            return
-        # in all other cases
-        temp = self.Node(item, current, previous)  # make the node in between current and previous
-        previous.setNext(temp)  # then complete those two connections both ways
-        current.setBack(temp)
-
-        self.length += 1  # finally, increment length
