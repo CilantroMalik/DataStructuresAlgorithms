@@ -83,7 +83,58 @@ while not gameOver:  # master loop
         while True:  # have to go indefinitely until someone wins the war
             print("Time for WAR")
 
-            # TODO work out finer points of war logic
+            # first check if either player will run out of cards, and if so, stop the program
+            if playerDeck.size() < 4 and aiDeck.size() < 4:  # super rare case when both players lose at the same time
+                print("Everyone loses!")
+                gameOver = True
+                break
+            if playerDeck.size() < 4:
+                print("You lose because you have insufficient resources to wage war.")
+                gameOver = True
+                break
+            if aiDeck.size() < 4:
+                print("You win because your opponent has insufficient resources to wage war.")
+                gameOver = True
+                break
+
+            # temporary lists to keep track of the cards involved in the war
+            playerWarCards = DLL()
+            aiWarCards = DLL()
+            for i in range(4):  # add four cards; the last one added (will be the head) is what we care about
+                tempPlayer = playerDeck.dequeue()
+                tempAI = aiDeck.dequeue()
+                # display the cards for each player (show the last one a bit differently since it is the deciding card)
+                print(f"You |>  {display_card(tempPlayer)}  <||>  {display_card(tempAI)}  <| AI" if i == 3
+                      else f"You |   {display_card(tempPlayer)}   ||   {display_card(tempAI)}   | AI")
+                playerWarCards.add(tempPlayer)
+                aiWarCards.add(tempAI)
+
+            if playerWarCards.getHead().getData() != aiWarCards.getHead().getData():  # war is not a tie
+                current1, current2 = playerWarCards.getHead(), aiWarCards.getHead()
+                while current1 is not None and current2 is not None:
+                    if (playerWarCards.getHead().getData() - 1) % 13 > (
+                            aiWarCards.getHead().getData() - 1) % 13:  # player wins --> add to deck
+                        playerDeck.enqueue(current1.getData())
+                        playerDeck.enqueue(current2.getData())
+                        if current1.getNext() is None:  # print the winner on the last loop iteration (only once)
+                            playerDeck.enqueue(playerCard)  # and add the original cards that started the war
+                            playerDeck.enqueue(aiCard)  # this happens only once so we put it here
+                            print("You are exceptionally skilled at the game and have won the war.")
+                    else:  # ai wins --> add to AI deck instead. same logic as above
+                        aiDeck.enqueue(current1.getData())
+                        aiDeck.enqueue(current2.getData())
+                        if current1.getNext() is None:
+                            aiDeck.enqueue(playerCard)
+                            aiDeck.enqueue(aiCard)
+                            print("The AI has displayed remarkable tactical genius and has won the war.")
+                    current1 = current1.getNext()
+                    current2 = current2.getNext()
+                break  # if the war is won, stop the loop
+
+            # if the cards are equal, just return to the start of the loop and have another war
+            else:
+                print("WE GO AGANE")
+                # automatically return to the top of the loop
 
     print(f"Your Deck |   {playerDeck.size()}   ||   {aiDeck.size()}   | AI's Deck")
     # game logic: at end of loop, perform checks for possible game over states
