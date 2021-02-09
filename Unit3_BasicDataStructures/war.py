@@ -61,4 +61,36 @@ while current is not None:
     current = current.getNext()
     counter += 1
 
-# TODO begin main game loop
+# --- main loop ---
+print("------------ GAME START ------------")
+print("   (press enter to play a turn.)   ")
+gameOver = False
+while not gameOver:  # master loop
+    input()  # program will stall until user presses enter
+    os.system("clear")  # clear the terminal for readability
+    playerCard, aiCard = playerDeck.dequeue(), aiDeck.dequeue()
+    print(f"You |   {display_card(playerCard)}   ||   {display_card(aiCard)}   | AI")
+    # test the values mod-13 and shifted from 0-51 to isolate the card rank itself and not the suit
+    if (playerCard-1) % 13 > (aiCard-1) % 13:  # if the player wins the hand
+        print("You are a highly talented and skilled player.")
+        playerDeck.enqueue(playerCard)
+        playerDeck.enqueue(aiCard)
+    elif (aiCard-1) % 13 > (playerCard-1) % 13:  # if the ai wins the hand
+        print("Alas, the AI has bested you in sheer strategic prowess.")
+        aiDeck.enqueue(aiCard)
+        aiDeck.enqueue(playerCard)
+    else:
+        while True:  # have to go indefinitely until someone wins the war
+            print("Time for WAR")
+
+            # TODO work out finer points of war logic
+
+    print(f"Your Deck |   {playerDeck.size()}   ||   {aiDeck.size()}   | AI's Deck")
+    # game logic: at end of loop, perform checks for possible game over states
+    if playerDeck.isEmpty():
+        print(">> You lose because your deck is empty.")
+        gameOver = True
+
+    if aiDeck.isEmpty():
+        print(">> You win because the AI lost since its deck was empty.")
+        gameOver = True
