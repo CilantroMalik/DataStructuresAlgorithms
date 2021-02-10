@@ -9,7 +9,7 @@ that card decides who takes the entire pool. The first person to empty their opp
 # --- imports ---
 import random
 import os
-from DoublyLinkedList import DoublyLinkedList as DLL
+from doublyLinkedList import DoublyLinkedList as DLL
 from efficientQueue import Queue
 
 
@@ -27,7 +27,7 @@ def display_card(value):
     elif value // 13 == 3:
         suit = "Clubs"
     # then the value is much simpler from there using modulo within each segment of 13
-    val = (value % 13)+2  # add 2 so it aligns with the real card values
+    val = (value % 13) + 2  # add 2 so it aligns with the real card values
     if val == 11:
         val = "Jack"
     if val == 12:
@@ -42,7 +42,12 @@ def display_card(value):
 # --- game setup ---
 
 # create deck: insert the numbers 1 to 52 (representing cards) in random positions, repeat for the number of decks
-numDecks = int(input("How many decks (1-6) would you like to play with? "))
+while True:  # get the number of decks, with error handling
+    numDecks = int(input("How many decks (1-6) would you like to play with? "))
+    if 6 < numDecks > 1:
+        print("Invalid number of decks, please re-enter")
+    else:
+        break
 deck = DLL()
 for i in range(numDecks):
     for j in range(1, 53):
@@ -71,11 +76,11 @@ while not gameOver:  # master loop
     playerCard, aiCard = playerDeck.dequeue(), aiDeck.dequeue()
     print(f"You |   {display_card(playerCard)}   ||   {display_card(aiCard)}   | AI")
     # test the values mod-13 and shifted from 0-51 to isolate the card rank itself and not the suit
-    if (playerCard-1) % 13 > (aiCard-1) % 13:  # if the player wins the hand
+    if (playerCard - 1) % 13 > (aiCard - 1) % 13:  # if the player wins the hand
         print("You are a highly talented and skilled player.")
         playerDeck.enqueue(playerCard)
         playerDeck.enqueue(aiCard)
-    elif (aiCard-1) % 13 > (playerCard-1) % 13:  # if the ai wins the hand
+    elif (aiCard - 1) % 13 > (playerCard - 1) % 13:  # if the ai wins the hand
         print("Alas, the AI has bested you in sheer strategic prowess.")
         aiDeck.enqueue(aiCard)
         aiDeck.enqueue(playerCard)
@@ -88,11 +93,11 @@ while not gameOver:  # master loop
                 print("Everyone loses!")
                 gameOver = True
                 break
-            if playerDeck.size() < 4:
+            if playerDeck.size() < 4:  # player runs out of cards in deck
                 print("You lose because you have insufficient resources to wage war.")
                 gameOver = True
                 break
-            if aiDeck.size() < 4:
+            if aiDeck.size() < 4:  # AI runs out of cards in deck
                 print("You win because your opponent has insufficient resources to wage war.")
                 gameOver = True
                 break
@@ -107,9 +112,9 @@ while not gameOver:  # master loop
                 print(f"You |>  {display_card(tempPlayer)}  <||>  {display_card(tempAI)}  <| AI" if i == 3
                       else f"You |   {display_card(tempPlayer)}   ||   {display_card(tempAI)}   | AI")
                 playerWarCards.add(tempPlayer)
-                aiWarCards.add(tempAI)
+                aiWarCards.add(tempAI)  # add the war cards to their respective lists
 
-            if playerWarCards.getHead().getData() != aiWarCards.getHead().getData():  # war is not a tie
+            if playerWarCards.getHead().getData() != aiWarCards.getHead().getData():  # if the war is not a tie
                 current1, current2 = playerWarCards.getHead(), aiWarCards.getHead()
                 while current1 is not None and current2 is not None:
                     if (playerWarCards.getHead().getData() - 1) % 13 > (
@@ -131,13 +136,14 @@ while not gameOver:  # master loop
                     current2 = current2.getNext()
                 break  # if the war is won, stop the loop
 
-            # if the cards are equal, just return to the start of the loop and have another war
+            # if the cards are equal, the war is tied; just return to the start of the loop and have another war
             else:
-                print("WE GO AGANE")
+                print("You are quite skilled, but so is the AI. You must make another attempt at war.")
                 # automatically return to the top of the loop
 
     print(f"Your Deck |   {playerDeck.size()}   ||   {aiDeck.size()}   | AI's Deck")
-    # game logic: at end of loop, perform checks for possible game over states
+    # game logic: at end of loop, perform checks for possible game over states; if one of them has been reached, give
+    # the player that feedback and then set the flag that exits the game
     if playerDeck.isEmpty():
         print(">> You lose because your deck is empty.")
         gameOver = True
