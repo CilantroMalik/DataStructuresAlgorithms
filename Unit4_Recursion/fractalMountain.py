@@ -5,7 +5,7 @@ import random
 """
 --- Fractal Mountain ---
 Creates a modified version of a Sierpinski triangle fractal that has random horizontal and vertical noise
-for each point, yielding a fractal-mountain-esque image but in the shape of the Sierpinski triangle.
+for each point, yielding a fractal-mountain-esque image but in the shape and style of Sierpinski's triangle.
 """
 
 

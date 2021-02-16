@@ -1,3 +1,15 @@
+"""
+--- Jug Problem ---
+A recursive algorithm for the "jug problem", where we have two jugs of set sizes with no markings on them, and we have to
+get a certain number of gallons in one of the jugs. The only way to "measure" is using the full capacity of any jug
+since there are no measuring lines with which to ascertain any other amount. For example, a possible configuration could be
+jugs of 5 and 3 gallon capacities, and the goal is to get 4 gallons in the larger jug. This would be solved by filling the
+large jug, pouring it into the small jug (leaving two gallons in the larger one) then emptying the small one and pouring
+into there (leaving two gallons in the small jug) and finally filling the 5 gallon jug and pouring into the small one until
+it is full (which will only be 1 more gallon, leaving 4 gallons in the larger jug).
+"""
+
+
 # standard stack implementation
 class Stack:
     def __init__(self):
@@ -22,13 +34,12 @@ class Stack:
         return len(self.items)
 
 
-# assume jugs of size `x` and `y` gallons, where `x` is the larger jug,
-# and let desired final amount of water be `g` gallons. The jugs are named A and B, larger and smaller respectively
-# in order to get `g` gallons of water in jug A, you must first get y-(x-g) gallons in jug B
-# and fill A, then pour A into B.
-# and in order to get the y-(x-g) in B, you must get y-(x-g) gallons in A
-# now set `g` equal to y-(x-g), the new desired amount, and rerun the algorithm
-# stop when `g` is set to x, the maximum capacity of jug A
+# assume jugs of size x and y gallons, where x is the larger jug, and let the desired final amount of water be g gallons.
+# also let the larger and smaller jugs be named A and B respectively. in order to get g gallons of water in jug A,
+# we must first get y-(x-g) gallons in jug B and fill A, then pour A into B; and in order to get the y-(x-g) in B,
+# we must get y-(x-g) gallons in A. now recursively set g (our goal amount) equal to y-(x-g), the new desired amount,
+# and rerun the algorithm to find how to reach this smaller goal. stop when g is set to x, the maximum capacity of jug A,
+# and then we are done since we can trivially reach this goal and we just ride back up the call stack to solve the problem.
 
 moves = Stack()  # each item is [action, jug A water level, jug B water level]
 
@@ -108,4 +119,5 @@ def reverseList(alist):
         return reverseList(alist[1:]) + [alist[0]]
 
 
+# testing on a relatively simple configuration of jugs with a clear solution
 jug(4, 3, 2)

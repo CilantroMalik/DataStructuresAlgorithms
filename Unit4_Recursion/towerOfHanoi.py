@@ -1,3 +1,14 @@
+"""
+--- Tower of Hanoi ---
+Recursive solution to the Tower of Hanoi puzzle, where the task is to move a set of disks from one pole to another
+only having a third pole to assist in the task. The only rules are that 1) only one disk can be moved at a time and it
+must be taken from the top of a stack; and 2) that a larger disk may not be placed on top of a smaller disk at any time.
+The disks start on the first pole with largest on bottom and smallest on top, and have to be placed similarly on the
+destination pole using only legal single-disk moves. This implementation also uses Stacks to keep track of disks and
+visualize the state of the system during the solving of the puzzle.
+"""
+
+
 # standard stack implementation
 class Stack:
     def __init__(self):
