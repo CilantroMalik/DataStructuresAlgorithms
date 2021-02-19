@@ -37,29 +37,30 @@ def validateHelper(password, stage):
         return len([c for c in password if not (c.isalpha() or c.isdigit())]) >= 1
 
 
-# string that stores every single entry
-chars = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?"
-tries = 0
+# indices -> uppercase: 0-25; lowercase: 26-51; numbers: 52-61; special chars: 62-84
+chars = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890!@#$%^&*()-+<>?:\"[]{}|."
 
 
-# indices -> uppercase: 0-25; lowercase: 26-51; numbers: 52-61; special chars: 62-93
 # uses brute force to attempt to guess the user's password
 def bruteForce(password):
     for i in range(2, 7):
-        result = bruteForceHelper(list(password), i, ["a"] * i, 0, [0])
+        result = bruteForceHelper(list(password), i, ["Q"] * i, 0, [0])
         if result is not None:
             return result[0]
         print("finished", i, "letters")
 
 
-def bruteForceHelper(password, length, guess, i, num):
+def bruteForceHelper(password, length, guess, i, tries):
     if i == length:
-        num[0] += 1
-        return num if guess == password else None
+        tries[0] += 1
+        return tries if guess == password else None
     for char in chars:
-        new = guess
-        new[i] = char
-        result = bruteForceHelper(password, length, new, i + 1, num)
+        if guess[i-1] == char and guess[i-2] == char:
+            continue
+        # new = guess
+        # new[i] = char
+        guess[i] = char
+        result = bruteForceHelper(password, length, guess, i + 1, tries)
         if result is not None:
             return result
     return None
@@ -69,7 +70,7 @@ def bruteForceHelper(password, length, guess, i, num):
 # print(validate("ABc12!"))
 # print(validate("sbfhabSJ1342@#$")
 now = time.time()
-print(bruteForce("3p!c"))
+print(bruteForce("test"))
 done = time.time()
 print("guessed in", (done-now)//60, "min", (done-now) % 60, "sec")
 
