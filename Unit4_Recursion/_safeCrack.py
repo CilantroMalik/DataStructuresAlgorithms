@@ -5,7 +5,6 @@ is valid according to a set of specifications, and a function that uses brute fo
 combinations until it finds a password that exactly matches.
 """
 
-
 # checks a user's password for validity based on the following conditions:
 # -> between 6 to 18 characters in length
 # -> contains at least 2 uppercase letters
@@ -13,6 +12,9 @@ combinations until it finds a password that exactly matches.
 # -> contains at least 2 numbers
 # -> contains at least 1 special characters
 # @param password: the password string to validate
+import time
+
+
 def validate(password):
     return validateHelper(password, "length")
 
@@ -24,20 +26,52 @@ def validateHelper(password, stage):
     if stage == "length":
         return validateHelper(password, "upper") if 6 <= len(password) <= 18 else False
     elif stage == "upper":
-        return validateHelper(password, "lower") if len([c for c in password if c.isalpha() and c == c.upper()]) >= 2 else False
+        return validateHelper(password, "lower") if len(
+            [c for c in password if c.isalpha() and c == c.upper()]) >= 2 else False
     elif stage == "lower":
-        return validateHelper(password, "num") if len([c for c in password if c.isalpha() and c == c.lower()]) >= 1 else False
+        return validateHelper(password, "num") if len(
+            [c for c in password if c.isalpha() and c == c.lower()]) >= 1 else False
     elif stage == "num":
         return validateHelper(password, "spec") if len([c for c in password if c.isdigit()]) >= 2 else False
     else:  # stage == "spec"
         return len([c for c in password if not (c.isalpha() or c.isdigit())]) >= 1
 
 
+# string that stores every single entry
+chars = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890`~!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?"
+
+
+# indices -> uppercase: 0-25; lowercase: 26-51; numbers: 52-61; special chars: 62-93
 # uses brute force to attempt to guess the user's password
-def bruteForce():
-    pass
+def bruteForce(password):
+    for i in range(2, 7):
+        result = bruteForceHelper(list(password), ["a"] * i, 0)
+        if result is not None:
+            return "".join(result)
+        print("finished", i, "letters")
+
+
+def bruteForceHelper(password, guess, i):
+    if i == len(guess):
+        return password if guess == password else None
+    for char in chars:
+        new = guess
+        new[i] = char
+        result = bruteForceHelper(password, new, i + 1)
+        if result is not None:
+            return result
+    return None
+
+
+def replaceCharAt(string, char, index):
+    return string[:-1] + char if index == len(string) - 1 else string[:index] + char + string[index + 1:]
 
 
 # --- testing ---
-print(validate("ABc12!"))
-print(validate("sbfhabSJ1342@#$"))
+# print(validate("ABc12!"))
+# print(validate("sbfhabSJ1342@#$")
+now = time.time()
+print(bruteForce("3p!cER"))
+done = time.time()
+print("guessed in", (done-now)//60, "min", (done-now)%60, "sec")
+
