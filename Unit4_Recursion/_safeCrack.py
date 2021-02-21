@@ -70,7 +70,7 @@ def bruteForceHelper(password, length, guess, i, tries):
 # print(validate("ABc12!"))
 # print(validate("sbfhabSJ1342@#$")
 now = time.time()
-print(bruteForce("test"))
+print(bruteForce("3p!c"))
 done = time.time()
 print("guessed in", (done-now)//60, "min", (done-now) % 60, "sec")
 
