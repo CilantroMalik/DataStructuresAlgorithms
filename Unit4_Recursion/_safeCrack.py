@@ -26,15 +26,31 @@ def validateHelper(password, stage):
     if stage == "length":
         return validateHelper(password, "upper") if 6 <= len(password) <= 18 else False
     elif stage == "upper":
-        return validateHelper(password, "lower") if len(
-            [c for c in password if c.isalpha() and c == c.upper()]) >= 2 else False
+        return validateHelper(password, "lower") if len([c for c in password if c.isupper()]) >= 2 else False
     elif stage == "lower":
-        return validateHelper(password, "num") if len(
-            [c for c in password if c.isalpha() and c == c.lower()]) >= 1 else False
+        return validateHelper(password, "num") if len([c for c in password if c.islower()]) >= 1 else False
     elif stage == "num":
         return validateHelper(password, "spec") if len([c for c in password if c.isdigit()]) >= 2 else False
     else:  # stage == "spec"
         return len([c for c in password if not (c.isalpha() or c.isdigit())]) >= 1
+
+
+# TODO optimize this and maybe encode this info in function parameters
+def validateAlt(password):
+    diff = 0
+    requirements = [1, 1, 1, 1]
+    for char in password:
+        if char.isupper():
+            requirements[0] -= 1
+        elif char.islower():
+            requirements[1] -= 1
+        elif char.isdigit():
+            requirements[2] -= 1
+        else:
+            requirements[3] -= 1
+    for req in requirements:
+        diff += req if req > 0 else 0
+    return diff
 
 
 # indices -> uppercase: 0-25; lowercase: 26-51; numbers: 52-61; special chars: 62-84
@@ -51,14 +67,14 @@ def bruteForce(password):
 
 
 def bruteForceHelper(password, length, guess, i, tries):
+    if validateAlt(guess) > length-i+1:
+        return None
     if i == length:
         tries[0] += 1
         return tries if guess == password else None
     for char in chars:
         if guess[i-1] == char and guess[i-2] == char:
             continue
-        # new = guess
-        # new[i] = char
         guess[i] = char
         result = bruteForceHelper(password, length, guess, i + 1, tries)
         if result is not None:
@@ -68,9 +84,9 @@ def bruteForceHelper(password, length, guess, i, tries):
 
 # --- testing ---
 # print(validate("ABc12!"))
-# print(validate("sbfhabSJ1342@#$")
+# print(validate("sbfhabSJ1342@#$"))
 now = time.time()
-print(bruteForce("3p!c"))
+print(bruteForce("3p!C"))
 done = time.time()
 print("guessed in", (done-now)//60, "min", (done-now) % 60, "sec")
 
