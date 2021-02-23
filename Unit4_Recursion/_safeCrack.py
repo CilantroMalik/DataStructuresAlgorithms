@@ -5,52 +5,49 @@ is valid according to a set of specifications, and a function that uses brute fo
 combinations until it finds a password that exactly matches.
 """
 
+from timeit import Timer
+
 # checks a user's password for validity based on the following conditions:
 # -> between 6 to 18 characters in length
 # -> contains at least 2 uppercase letters
 # -> contains at least 1 lowercase letter
 # -> contains at least 2 numbers
-# -> contains at least 1 special characters
+# -> contains at least 1 special character
+# -> has no more than 3 consecutive appearances of the same character
 # @param password: the password string to validate
-import time
-
-
 def validate(password):
-    return validateHelper(password, "length")
+    return validateHelper(password, 0, [0, 0, 0, 0], [" ", 0]) if 6 <= len(password) <= 15 else False
 
 
-# helper function that recursively runs validation stage by stage (for each of the stipulations laid out above).
-# @param password: passed straight through from the main function
-# @param stage: what stage of validation the function is on (possible values: "len", "upper", "lower", "num", "spec")
-def validateHelper(password, stage):
-    if stage == "length":
-        return validateHelper(password, "upper") if 6 <= len(password) <= 18 else False
-    elif stage == "upper":
-        return validateHelper(password, "lower") if len([c for c in password if c.isupper()]) >= 2 else False
-    elif stage == "lower":
-        return validateHelper(password, "num") if len([c for c in password if c.islower()]) >= 1 else False
-    elif stage == "num":
-        return validateHelper(password, "spec") if len([c for c in password if c.isdigit()]) >= 2 else False
-    else:  # stage == "spec"
-        return len([c for c in password if not (c.isalpha() or c.isdigit())]) >= 1
+# helper function that does all the work of validating the password; uses parameters to store information through recursion
+# @param password: the password string to validate
+# @param i: the current index we are looking at (we go through the password character by character)
+# @param reqs: a list of four numbers keeping track of the four types of character requirements. It starts as [0, 0, 0, 0]
+#              for [upper, lower, digit, special] and the relevant value is incremented each time it appears in the string.
+# @param inRow: a list of two items, a character and a number, keeping track of how many instances of a character appear
+#               consecutively. The variable starts at [" ", 0] and the counter is reset every time a new character is encountered
+#               but incremented if the currently stored character is encountered again.
+def validateHelper(password, i, reqs, inRow):
+    if i == len(password):
+        return reqs[0] >= 2 and reqs[1] >= 1 and reqs[2] >= 2 and reqs[3] >= 1
 
+    if password[i] != inRow[0]:
+        inRow[0], inRow[1] = password[i], 1
+    else:
+        if inRow[1] == 2:
+            return False
+        inRow[1] += 1
 
-# TODO optimize this and maybe encode this info in function parameters
-def validateAlt(password):
-    diff = 0
-    requirements = [1, 1, 1, 1]
-    for char in password:
-        if char.isupper():
-            requirements[0] -= 1
-        elif char.islower():
-            requirements[1] -= 1
-        elif char.isdigit():
-            requirements[2] -= 1
-        else:
-            requirements[3] -= 1
-    for req in requirements:
-        diff += req if req > 0 else 0
-    return diff
+    if password[i].isupper():
+        reqs[0] += 1
+    elif password[i].islower():
+        reqs[1] += 1
+    elif password[i].isdigit():
+        reqs[2] += 1
+    else:
+        reqs[3] += 1
+
+    return validateHelper(password, i + 1, reqs, inRow)
 
 
 # indices -> uppercase: 0-25; lowercase: 26-51; numbers: 52-61; special chars: 62-84
@@ -67,8 +64,6 @@ def bruteForce(password):
 
 
 def bruteForceHelper(password, length, guess, i, tries):
-    if validateAlt(guess) > length-i+1:
-        return None
     if i == length:
         tries[0] += 1
         return tries if guess == password else None
@@ -84,9 +79,8 @@ def bruteForceHelper(password, length, guess, i, tries):
 
 # --- testing ---
 # print(validate("ABc12!"))
-# print(validate("sbfhabSJ1342@#$"))
-now = time.time()
-print(bruteForce("3p!C"))
-done = time.time()
-print("guessed in", (done-now)//60, "min", (done-now) % 60, "sec")
+# print(validate("1!2qwEE"))
+
+# timer = Timer("bruteForce('3p!c')", "from __main__ import bruteForce")
+# print("done in", timer.timeit(1), "seconds")
 
