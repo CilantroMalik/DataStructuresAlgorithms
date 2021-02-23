@@ -77,6 +77,26 @@ def bruteForceHelper(password, length, guess, i, tries):
     return None
 
 
+# new "brute force" cracker that allows access to individual characters in the string
+def newBruteForce(password):
+    for i in range(6, 16):
+        result = newBruteForceHelper(password, [" "]*i, i, 0)
+        if result is not None:
+            return result
+
+
+def newBruteForceHelper(password, guess, length, i):
+    if i == length:
+        result = "".join(guess)
+        return result if result == password else None
+
+    for char in chars:
+        if password[i] == char:
+            guess[i] = char
+            break
+    return newBruteForceHelper(password, guess, length, i+1)
+
+
 # --- testing ---
 # print(validate("ABc12!"))
 # print(validate("1!2qwEE"))
@@ -84,3 +104,7 @@ def bruteForceHelper(password, length, guess, i, tries):
 # timer = Timer("bruteForce('3p!c')", "from __main__ import bruteForce")
 # print("done in", timer.timeit(1), "seconds")
 
+timer = Timer("newBruteForce('mio28%^&2bnVK#9')", "from __main__ import newBruteForce")
+print("done in", timer.timeit(1), "seconds")
+
+# newBruteForce("3p!cNE55")
