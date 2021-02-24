@@ -7,6 +7,8 @@ combinations until it finds a password that exactly matches.
 
 from timeit import Timer
 
+# -- validator --
+
 # checks a user's password for validity based on the following conditions:
 # -> between 6 to 18 characters in length
 # -> contains at least 2 uppercase letters
@@ -50,50 +52,62 @@ def validateHelper(password, i, reqs, inRow):
     return validateHelper(password, i + 1, reqs, inRow)
 
 
+# -- cracker --
+
 # helper variable for brute forcing. indices -> uppercase: 0-25; lowercase: 26-51; numbers: 52-61; special chars: 62-84
 chars = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890!@#$%^&*()-+<>?:\"[]{}|."
 
 
-# uses brute force to attempt to guess the user's password
+# uses brute force to attempt to guess the user's password, having only access to check an entire guess for equality
+# @param password: the target password to be guessed
 def bruteForce(password):
-    for i in range(2, 7):
+    # have to test for each possible length of password from 6 to 15
+    for i in range(6, 16):
+        # call our main function with the password as a list for faster operations, the length as a parameter (for speed),
+        # our guess for the password (starts as all Qs, implemented as a list for faster get/set), the index we are
+        # currently at, which will keep track of recursion, and finally the number of tries (again as a list so it persists
+        # through recursion since lists are passed by reference but integers are not).
         result = bruteForceHelper(list(password), i, ["Q"] * i, 0, [0])
-        if result is not None:
+        if result is not None:  # if this length returned a match, we are done; if not, just try the next length
             return result[0]
-        print("finished", i, "letters")
 
 
+# main function that does all the work; parameters discussed above
 def bruteForceHelper(password, length, guess, i, tries):
-    if i == length:
-        tries[0] += 1
+    if i == length:  # if we have reached the end of the list in our recursion, check whether the guess was correct
+        tries[0] += 1  # since we are checking we have to add one try
         return tries if guess == password else None
-    for char in chars:
-        if guess[i-1] == char and guess[i-2] == char:
+    for char in chars:  # at each iteration, we go through every possible character that could be in the position
+        if guess[i-1] == char and guess[i-2] == char:  # if this would be the third character in a row, skip this branch
             continue
-        guess[i] = char
-        result = bruteForceHelper(password, length, guess, i + 1, tries)
-        if result is not None:
+        guess[i] = char  # set the character of the guess to the current letter we are on
+        result = bruteForceHelper(password, length, guess, i + 1, tries)  # "branch" off into a new function call with this letter
+        if result is not None:  # if we received a match from this "branch", we are done, if not, try another branch
             return result
-    return None
+    return None  # if we did not receive a match from any letter in this branch, we made a mistake somewhere up the tree
 
 
 # new "brute force" cracker that allows access to individual characters in the string
+# @param password: the target password to be guessed
 def newBruteForce(password):
+    # call our helper function with a few extra parameters: the list storing our guess (list for fast operations) and the
+    # index we are currently at, which we need to keep track of our place through recursion
     return newBruteForceHelper(password, [""]*16, 0)
 
 
+# helper function that performs the brute forcing; parameters discussed above
 def newBruteForceHelper(password, guess, i):
-    try:
+    try:  # try to access the element at i; if we cannot, that means we have reached the end of the list and should return
         _ = password[i]
     except IndexError:
-        result = "".join(guess)
-        return result if result == password else None
+        result = "".join(guess)  # convert from a list back to a string
+        return result if result == password else None  # slightly redundant check because ideally we will already know this is true
 
-    for char in chars:
+    for char in chars:  # go through each possible character to check if it matches the character at the current position in the password
         if password[i] == char:
             guess[i] = char
-            break
-    return newBruteForceHelper(password, guess, i+1)
+            break  # we can quit the loop after we have found the character we want
+    return newBruteForceHelper(password, guess, i+1)  # we have incrementally improved our guess; now move onto the next character
 
 
 # --- testing ---
