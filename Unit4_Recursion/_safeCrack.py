@@ -6,6 +6,10 @@ combinations until it finds a password that exactly matches.
 """
 
 from timeit import Timer
+from getpass import getpass
+import random
+import os
+import time
 
 # -- validator --
 
@@ -89,25 +93,40 @@ def bruteForceHelper(password, length, guess, i, tries):
 
 # new "brute force" cracker that allows access to individual characters in the string
 # @param password: the target password to be guessed
-def newBruteForce(password):
+# @param verbose: optional parameter, if set to true the brute force cracker will periodically output its guesses
+def newBruteForce(password, verbose=False):
     # call our helper function with a few extra parameters: the list storing our guess (list for fast operations) and the
     # index we are currently at, which we need to keep track of our place through recursion
-    return newBruteForceHelper(password, [""]*16, 0)
+    return newBruteForceHelper(password, [""]*16, 0, [0], verbose)
 
 
 # helper function that performs the brute forcing; parameters discussed above
-def newBruteForceHelper(password, guess, i):
+def newBruteForceHelper(password, guess, i, tries, verbose=False):
+
     try:  # try to access the element at i; if we cannot, that means we have reached the end of the list and should return
         _ = password[i]
     except IndexError:
         result = "".join(guess)  # convert from a list back to a string
-        return result if result == password else None  # slightly redundant check because ideally we will already know this is true
+        return tries[0] if result == password else None  # slightly redundant check because ideally we will already know this is true
 
     for char in chars:  # go through each possible character to check if it matches the character at the current position in the password
+        if verbose:
+            print("".join(guess[:i]) + randomChars(random.randint(3, 7)))
+            time.sleep(0.01)
+            os.system("clear")
+
+        tries[0] += 1
         if password[i] == char:
             guess[i] = char
             break  # we can quit the loop after we have found the character we want
-    return newBruteForceHelper(password, guess, i+1)  # we have incrementally improved our guess; now move onto the next character
+    return newBruteForceHelper(password, guess, i+1, tries, verbose)  # we have incrementally improved our guess; now move onto the next character
+
+
+def randomChars(numChars):
+    output = ""
+    for i in range(numChars):
+        output += chars[random.randint(0, 84)]
+    return output
 
 
 # --- testing ---
@@ -117,4 +136,15 @@ def newBruteForceHelper(password, guess, i):
 # timer = Timer("bruteForce('3p!c')", "from __main__ import bruteForce")
 # print("done in", timer.timeit(1), "seconds")
 
-print(newBruteForce("BNFIgh145$%&"))
+# print(newBruteForce("BNFIgh145$%&"))
+
+# --- main program interface ---
+print("Welcome to SafeCrack")
+print("Are you looking to validate a password (v) or attempt to crack one (c)?")
+task = input("(Type 'v' or 'c'.) ")
+password = getpass(prompt=f"Enter password to {'validate' if task == 'v' else 'crack'}: ")
+if task == "v":
+    print("Valid" if validate(password) else "Invalid")
+elif task == "c":
+    os.system("clear")
+    print(f"Guessed {password} in {newBruteForce(password, True)} tries")
