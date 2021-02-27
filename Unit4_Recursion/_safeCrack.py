@@ -75,16 +75,16 @@ chars = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890!@#$%^&*(
 # "brute force" cracker, but allows access to individual characters in the string
 # @param password: the target password to be guessed
 # @param verbose: optional parameter, if set to True the brute force cracker will periodically output its guesses
-def newBruteForce(password, verbose=False):
+def bruteForce(password, verbose=False):
     # call our helper function with a few extra parameters: the list storing our guess (list for fast operations) and the
     # index we are currently at, which we need to keep track of our place through recursion. we additionally have to pass
     # in a list of one item, storing the number of tries (starting at zero) - we use a list because they are passed by reference
     # unlike integers and therefore their value persists across recursive calls. finally, we pass through the verbose option.
-    return newBruteForceHelper(password, [""]*20, 0, [0], verbose)
+    return bruteForceHelper(password, [""] * 20, 0, [0], verbose)
 
 
 # helper function that performs the brute forcing; parameters discussed above
-def newBruteForceHelper(password, guess, i, tries, verbose=False):
+def bruteForceHelper(password, guess, i, tries, verbose=False):
 
     try:  # try to access the element at i; if we cannot, that means we have reached the end of the list and should return
         _ = password[i]
@@ -103,7 +103,7 @@ def newBruteForceHelper(password, guess, i, tries, verbose=False):
         if password[i] == char:
             guess[i] = char
             break  # we can quit the loop after we have found the character we want
-    return newBruteForceHelper(password, guess, i+1, tries, verbose)  # we have incrementally improved our guess; now move onto the next character
+    return bruteForceHelper(password, guess, i + 1, tries, verbose)  # we have incrementally improved our guess; now move onto the next character
 
 
 # helper function that generates a sequence of random characters of the given length
@@ -125,7 +125,7 @@ while True:  # main loop; has to be "while True" because the user can go on inde
         input("Press enter to proceed to cracking...")  # wait for user feedback before proceeding
         time.sleep(1)  # contributes to the realism a little bit
         os.system("clear")  # prepare for the cracker
-        print(f"Guessed {pwd} in {newBruteForce(pwd, True)} tries")  # call the brute force method, with verbose mode on
+        print(f"Guessed {pwd} in {bruteForce(pwd, True)} tries")  # call the brute force method, with verbose mode on
 
     if input("Press enter to run this utility again, or type any key to quit.") != "":  # no error handling needed because it is so broad
         break  # if the user wanted to exit (anything but empty) then exit the loop
