@@ -12,6 +12,7 @@ import time
 
 # -- VALIDATOR --
 
+
 # checks a user's password for validity based on the following conditions:
 # -> between 6 to 18 characters in length
 # -> contains at least 2 uppercase letters
@@ -71,6 +72,7 @@ def validateHelper(password, i, reqs, inRow):
 
 # helper variable for brute forcing. indices -> uppercase: 0-25; lowercase: 26-51; numbers: 52-61; special chars: 62-84
 chars = "QWERTYUIOPASDFGHJKLZXCVBNMqwertyuiopasdfghjklzxcvbnm1234567890!@#$%^&*()-+<>?:\"[]{}|."
+
 
 # "brute force" cracker, but allows access to individual characters in the string
 # @param password: the target password to be guessed
