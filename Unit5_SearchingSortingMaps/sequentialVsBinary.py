@@ -1,41 +1,46 @@
 from timeit import Timer
-import random
+from random import randrange
 
 
+# sequentially searches item by item until it either finds the item or a larger one
+# this only works for an ordered list (since it has the property of being increasing)
 def orderedSequentialSearch(alist, item):
-    pos = 0
-    found = False
-    stop = False
+    pos = 0  # keep track of current index
+    found = False  # have we found the item?
+    stop = False  # have we reached something larger than the item?
     while pos < len(alist) and not found and not stop:
-        if alist[pos] == item:
+        if alist[pos] == item:  # if the current item is equal to our target, we are done
             found = True
         else:
-            if alist[pos] > item:
+            if alist[pos] > item:  # if it is greater, we are also done, but not found
                 stop = True
-            else:
+            else:  # if neither, just increase the index and keep searching
                 pos = pos + 1
 
-    return found
+    return found  # will be false if we either exited through `stop` or exhausted the whole list
 
 
+# splits the list in half every time by comparing the desired item to the item in the middle
+# so each time it checks an item, it eliminates half the remaining items from consideration
 def binarySearch(alist, item):
-    if len(alist) == 0:
+    if len(alist) == 0:  # base case: an empty list obviously does not contain the item
         return False
     else:
-        midpoint = len(alist) // 2
-        if alist[midpoint] == item:
+        midpoint = len(alist) // 2  # want to check the middle of the list (or as close as we can get)
+        if alist[midpoint] == item:  # we have found the item --> we are done
             return True
         else:
-            if item < alist[midpoint]:
+            # recurse on either half of the list
+            if item < alist[midpoint]:  # if the item is smaller than the midpoint, it is in the left half
                 return binarySearch(alist[:midpoint], item)
-            else:
+            else:  # if greater, the item is on the right
                 return binarySearch(alist[midpoint + 1:], item)
 
 
 for i in range(10000, 100001, 10000):
     t1 = Timer("orderedSequentialSearch(list1, random.randrange(%d))" % i,
                "from __main__ import random,orderedSequentialSearch,list1")
-    list1 = [random.randrange(i) for k in range(i)]
+    list1 = [randrange(i) for k in range(i)]
     list1.sort()
 
     t2 = Timer("binarySearch(list1, random.randrange(%d))" % i,
