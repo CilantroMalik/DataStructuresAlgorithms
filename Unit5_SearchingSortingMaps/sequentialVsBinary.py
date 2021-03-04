@@ -37,7 +37,9 @@ def binarySearch(alist, item):
                 return binarySearch(alist[midpoint + 1:], item)
 
 
+# test: run for increasing sizes of lists; use timeit.Timer for more accuracy/reproducibility
 for i in range(10000, 100001, 10000):
+    # create two timers that each run one of the functions
     t1 = Timer("orderedSequentialSearch(list1, random.randrange(%d))" % i,
                "from __main__ import random,orderedSequentialSearch,list1")
     list1 = [randrange(i) for k in range(i)]
