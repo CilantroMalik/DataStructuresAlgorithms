@@ -1,6 +1,13 @@
 from timeit import Timer
 from random import randrange
 
+"""
+--- Sequential vs Binary Search ---
+This program compares the performance of a sequential search and a recursive binary search
+on an ordered list. It provides implementations of both of these sorting methods and then
+runs a timing experiment to test their performance and how it scales with sizes of lists.
+"""
+
 
 # sequentially searches item by item until it either finds the item or a larger one
 # this only works for an ordered list (since it has the property of being increasing)
