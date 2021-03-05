@@ -47,13 +47,13 @@ def binarySearch(alist, item):
 # test: run for increasing sizes of lists; use timeit.Timer for more accuracy/reproducibility
 for i in range(10000, 100001, 10000):
     # create two timers that each run one of the functions
-    t1 = Timer("orderedSequentialSearch(list1, random.randrange(%d))" % i,
-               "from __main__ import random,orderedSequentialSearch,list1")
+    t1 = Timer("orderedSequentialSearch(list1, randrange(%d))" % i,
+               "from __main__ import randrange,orderedSequentialSearch,list1")
     list1 = [randrange(i) for k in range(i)]
     list1.sort()
 
-    t2 = Timer("binarySearch(list1, random.randrange(%d))" % i,
-               "from __main__ import random,binarySearch,list1")
+    t2 = Timer("binarySearch(list1, randrange(%d))" % i,
+               "from __main__ import randrange,binarySearch,list1")
 
     # uncomment these two lines to output length and time as points in the coordinate plane for graphing
     # print("(" + str(i / 10000) + ", " + str(t1.timeit(1000)) + ")")  # (x, y) format for graphing,   sequential

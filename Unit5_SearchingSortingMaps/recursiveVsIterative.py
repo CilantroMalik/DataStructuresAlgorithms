@@ -1,5 +1,5 @@
 from timeit import Timer
-import random
+from random import randrange
 
 """
 --- Recursive vs Iterative Binary Search ---
@@ -49,12 +49,12 @@ def recursiveBinarySearch(alist, item):
 # test: run for increasing sizes of lists; use timeit.Timer for more accuracy/reproducibility
 for i in range(10000, 100001, 10000):
     # create two timers that each run one of the functions
-    t1 = Timer("iterativeBinarySearch(list1, random.randrange(%d))" % i,
-               "from __main__ import random,iterativeBinarySearch,list1")
-    list1 = sorted([random.randrange(i) for k in range(i)])  # randomly generated a list, then sort it
+    t1 = Timer("iterativeBinarySearch(list1, randrange(%d))" % i,
+               "from __main__ import randrange,iterativeBinarySearch,list1")
+    list1 = sorted([randrange(i) for k in range(i)])  # randomly generated a list, then sort it
 
-    t2 = Timer("recursiveBinarySearch(list1, random.randrange(%d))" % i,
-               "from __main__ import random,recursiveBinarySearch,list1")
+    t2 = Timer("recursiveBinarySearch(list1, randrange(%d))" % i,
+               "from __main__ import randrange,recursiveBinarySearch,list1")
 
     # uncomment these two lines to output length and time as points in the coordinate plane for graphing
     # print("(" + str(i / 10000) + ", " + str(t1.timeit(1000)) + ")")  # (x, y) format for graphing, iterative
