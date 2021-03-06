@@ -1,5 +1,6 @@
 from timeit import Timer
 import random
+from os import system
 
 
 # =======================================================
@@ -13,9 +14,7 @@ def bubbleSort(alist):
     for passnum in range(len(alist) - 1, 0, -1):
         for i in range(passnum):
             if alist[i] > alist[i + 1]:
-                temp = alist[i]
-                alist[i] = alist[i + 1]
-                alist[i + 1] = temp
+                alist[i], alist[i+1] = alist[i+1], alist[i]
 
 
 # --------------------- SELECTION SORT ---------------------
@@ -28,9 +27,7 @@ def selectionSort(alist):
             if alist[location] > alist[positionOfMax]:
                 positionOfMax = location
 
-        temp = alist[fillslot]
-        alist[fillslot] = alist[positionOfMax]
-        alist[positionOfMax] = temp
+        alist[fillslot], alist[positionOfMax] = alist[positionOfMax], alist[fillslot]
 
 
 # --------------------- INSERTION SORT ---------------------
@@ -44,7 +41,7 @@ def insertionSort(alist):
 
         while position > 0 and alist[position - 1] > currentvalue:
             alist[position] = alist[position - 1]
-            position = position - 1
+            position -= 1
 
         alist[position] = currentvalue
 
@@ -114,55 +111,33 @@ def mergeSort(alist):
 
 # --------------------- QUICK SORT ---------------------
 
-
-def quickSort(alist):
-    quickSortHelper(alist, 0, len(alist) - 1)
-
-
-def quickSortHelper(alist, first, last):
-    if first < last:
-        splitpoint = partition(alist, first, last)
-
-        quickSortHelper(alist, first, splitpoint - 1)
-        quickSortHelper(alist, splitpoint + 1, last)
+def quickSort(input_list):
+    def _quickSort(input_list, leftmark, rightmark):
+        if leftmark < rightmark:
+            splitpoint = partition(input_list, leftmark, rightmark)
+            _quickSort(input_list, leftmark, splitpoint - 1)
+            _quickSort(input_list, splitpoint + 1, rightmark)
+    _quickSort(input_list, 0, len(input_list)-1)
 
 
-def partition(alist, first, last):
-    pivotvalue = alist[first]
-
-    leftmark = first + 1
-    rightmark = last
-
-    done = False
-    while not done:
-
-        while leftmark <= rightmark and alist[leftmark] <= pivotvalue:
-            leftmark = leftmark + 1
-
-        while alist[rightmark] >= pivotvalue and rightmark >= leftmark:
-            rightmark = rightmark - 1
-
-        if rightmark < leftmark:
-            done = True
-        else:
-            temp = alist[leftmark]
-            alist[leftmark] = alist[rightmark]
-            alist[rightmark] = temp
-
-    temp = alist[first]
-    alist[first] = alist[rightmark]
-    alist[rightmark] = temp
-
-    return rightmark
-
+def partition(input_list, leftmark, rightmark):
+    pos = leftmark - 1
+    pivot = input_list[leftmark + (rightmark - leftmark) // 2]
+    for j in range(leftmark, rightmark):
+        if input_list[j] <= pivot:
+            pos = pos + 1
+            input_list[pos], input_list[j] = input_list[j], input_list[pos]
+    input_list[pos+1], input_list[rightmark] = input_list[rightmark], input_list[pos + 1]
+    return pos + 1
 
 # --------------------- ANALYSIS ---------------------
 
-bubbleTotal, selectionTotal, insertionTotal, shellTotal, mergeTotal, quickTotal = 0, 0, 0, 0, 0, 0
+
+bubbleTotal, selectionTotal, insertionTotal, shellTotal, mergeTotal, quickTotal, timTotal = 0, 0, 0, 0, 0, 0, 0
 
 for i in range(100):
     # READY...
-    list1 = random.sample(range(5000), 500)
+    list1 = random.sample(range(5000), 2000)
 
     # SET...
     bubble = Timer("bubbleSort(list1)", "from __main__ import bubbleSort,list1")
@@ -171,7 +146,7 @@ for i in range(100):
     shell = Timer("shellSort(list1)", "from __main__ import shellSort,list1")
     merge = Timer("mergeSort(list1)", "from __main__ import mergeSort,list1")
     quick = Timer("quickSort(list1)", "from __main__ import quickSort,list1")
-
+    timsort = Timer("list1.sort()", "from __main__ import list1")
     # FIGHT!
     bubbleTotal += bubble.timeit(10)
     selectionTotal += selection.timeit(10)
@@ -179,12 +154,16 @@ for i in range(100):
     shellTotal += shell.timeit(10)
     mergeTotal += merge.timeit(10)
     quickTotal += quick.timeit(10)
+    timTotal += timsort.timeit(10)
 
+    system('clear')
     print(f"Loading: {i+1}%")
+    print("|" + ("="*(i//2 + 1)).ljust(50) + "|")
 
-print("Bubble Sort Total: " + str(bubbleTotal))
-print("Selection Sort Total: " + str(selectionTotal))
-print("Insertion Sort Total: " + str(insertionTotal))
-print("Shell Sort Total: " + str(shellTotal))
-print("Merge Sort Total: " + str(mergeTotal))
-print("Quick Sort Total: " + str(quickTotal))
+print("Bubble Sort Total:", bubbleTotal)
+print("Selection Sort Total:", selectionTotal)
+print("Insertion Sort Total:", insertionTotal)
+print("Shell Sort Total:", shellTotal)
+print("Merge Sort Total:", mergeTotal)
+print("Quick Sort Total:", quickTotal)
+print("Native Sort Total:", timTotal)
