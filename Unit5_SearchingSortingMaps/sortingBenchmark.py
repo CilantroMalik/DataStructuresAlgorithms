@@ -111,36 +111,37 @@ def mergeSort(alist):
 
 # --------------------- QUICK SORT ---------------------
 
-def quickSort(input_list):
-    def _quickSort(input_list, leftmark, rightmark):
+def quickSort(alist):
+    def _quickSort(alist, leftmark, rightmark):
         if leftmark < rightmark:
-            splitpoint = partition(input_list, leftmark, rightmark)
-            _quickSort(input_list, leftmark, splitpoint - 1)
-            _quickSort(input_list, splitpoint + 1, rightmark)
-    _quickSort(input_list, 0, len(input_list)-1)
+            splitpoint = partition(alist, leftmark, rightmark)
+            _quickSort(alist, leftmark, splitpoint - 1)
+            _quickSort(alist, splitpoint + 1, rightmark)
+    _quickSort(alist, 0, len(alist) - 1)
 
 
-def partition(input_list, leftmark, rightmark):
+def partition(alist, leftmark, rightmark):
     pos = leftmark - 1
-    pivot = input_list[leftmark + (rightmark - leftmark) // 2]
+    pivot = alist[leftmark + (rightmark - leftmark) // 2]
     for j in range(leftmark, rightmark):
-        if input_list[j] <= pivot:
+        if alist[j] <= pivot:
             pos = pos + 1
-            input_list[pos], input_list[j] = input_list[j], input_list[pos]
-    input_list[pos+1], input_list[rightmark] = input_list[rightmark], input_list[pos + 1]
+            alist[pos], alist[j] = alist[j], alist[pos]
+    alist[pos + 1], alist[rightmark] = alist[rightmark], alist[pos + 1]
     return pos + 1
 
 # --------------------- ANALYSIS ---------------------
 
 
+# create variables to store total times for each sorting algorithm
 bubbleTotal, selectionTotal, insertionTotal, shellTotal, mergeTotal, quickTotal, timTotal = 0, 0, 0, 0, 0, 0, 0
 
-for i in range(100):
+for i in range(100):  # run 100 trials, so the algorithms get tested on different lists
     # READY...
-    list1 = random.sample(range(5000), 2000)
+    list1 = random.sample(range(5000), 2000)  # test list of size 2000, numbers from 1 to 5000
 
     # SET...
-    bubble = Timer("bubbleSort(list1)", "from __main__ import bubbleSort,list1")
+    bubble = Timer("bubbleSort(list1)", "from __main__ import bubbleSort,list1")  # create timers for each sorting algorithm
     selection = Timer("selectionSort(list1)", "from __main__ import selectionSort,list1")
     insertion = Timer("insertionSort(list1)", "from __main__ import insertionSort,list1")
     shell = Timer("shellSort(list1)", "from __main__ import shellSort,list1")
@@ -148,7 +149,7 @@ for i in range(100):
     quick = Timer("quickSort(list1)", "from __main__ import quickSort,list1")
     timsort = Timer("list1.sort()", "from __main__ import list1")
     # FIGHT!
-    bubbleTotal += bubble.timeit(10)
+    bubbleTotal += bubble.timeit(10)  # then time them, 10 times to remove some small-number random error
     selectionTotal += selection.timeit(10)
     insertionTotal += insertion.timeit(10)
     shellTotal += shell.timeit(10)
@@ -156,10 +157,11 @@ for i in range(100):
     quickTotal += quick.timeit(10)
     timTotal += timsort.timeit(10)
 
-    system('clear')
-    print(f"Loading: {i+1}%")
-    print("|" + ("="*(i//2 + 1)).ljust(50) + "|")
+    system('clear')  # create the loading screen effect
+    print(f"Loading: {i+1}%")  # show how far we are through the script, since it takes a while
+    print("|" + ("="*(i//2 + 1)).ljust(50) + "|")  # "progress bar" effect
 
+# finally, print out the totals so we can compare
 print("Bubble Sort Total:", bubbleTotal)
 print("Selection Sort Total:", selectionTotal)
 print("Insertion Sort Total:", insertionTotal)
