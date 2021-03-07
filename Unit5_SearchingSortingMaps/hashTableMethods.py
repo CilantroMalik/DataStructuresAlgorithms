@@ -76,6 +76,28 @@ class HashTable:
                 count += 1
         return count  # at the end, return the counter
 
+    # to delete an element, we will want to find it first, then clear its slots in the table
+    def __del__(self, key):
+        startslot = self.hashfunction(key, len(self.slots))  # the search procedure will be similar to get()
+
+        finalPos = -1  # will store the final position of the item, if we find it
+        stop = False  # flag that will stop searching if we have traversed the whole list
+        found = False  # flag that will stop searching if we have found the item
+        position = startslot  # start the position at the "default" place for the item, as prescribed by the main hash function
+        while self.slots[position] is not None and not found and not stop:
+            if self.slots[position] == key:  # if we have found the item here, set the flag and store its position
+                found = True
+                finalPos = position
+            else:  # if not, we rehash and overwrite position in preparation for the next loop iteration
+                position = self.rehash(position, len(self.slots))
+                if position == startslot:  # if we have come all the way back to the start and have not found the item, it doesn't exist
+                    stop = True  # so we set the flag to stop the loop
+
+        # if we found the item, it will have been overwritten from the initial value of -1 and this bit will run
+        if finalPos > 0:
+            self.slots[finalPos] = None  # simply just clear out the key and value at this index (delete it)
+            self.data[finalPos] = None
+
     # to check whether an item is in the list, we can just check whether a call to get() returns something or whether it is None
     def __contains__(self, item):
         return self.get(item) is not None
