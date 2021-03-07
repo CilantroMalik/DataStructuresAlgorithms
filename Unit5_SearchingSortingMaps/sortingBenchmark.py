@@ -3,6 +3,14 @@ import random
 from os import system
 
 
+"""
+--- Sorting Algorithm Benchmark ---
+Program that implements a variety of sorting algorithms, and then pits them against each other in a timed test
+on randomly generated lists in order to see which are the fastest. The test runs multiple trials on each list 
+as well as testing on multiple lists in order to minimize variance in many different ways.
+"""
+
+
 # =======================================================
 # =================Algorithm Definitions=================
 # =======================================================
