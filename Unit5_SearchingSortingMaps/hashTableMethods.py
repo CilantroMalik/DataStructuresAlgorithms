@@ -22,13 +22,21 @@ class HashTable:
             self.slots[hashvalue] = key  # simply add in the key and value at that slot in their respective lists
             self.data[hashvalue] = data
         else:  # if it is already full...
+            i = 1  # for quadratic probing
             if self.slots[hashvalue] == key:  # if the slot already contains the same key, we want to overwrite the value
                 self.data[hashvalue] = data
             else:  # if the slot is already occupied by a different key, we have a conflict
                 nextslot = self.rehash(hashvalue, len(self.slots))  # rehash the old hash value to get a new one
+                # ***************************
+                # nextslot = self.rehashQuad(nextslot, len(self.slots), i)
+                # i += 1
+                # ^ quadratic probing implementation
                 while self.slots[nextslot] is not None and self.slots[nextslot] != key:  # keep rehashing until we find a valid slot
                     nextslot = self.rehash(nextslot, len(self.slots))
-
+                    # ***************************
+                    # nextslot = self.rehashQuad(nextslot, len(self.slots), i)
+                    # i += 1
+                    # ^ quadratic probing implementation
                 if self.slots[nextslot] is None:  # now once we have our slot, we use the same procedure as the first case above
                     self.slots[nextslot] = key  # if the slot was empty, fill it with our key and value
                     self.data[nextslot] = data
@@ -42,6 +50,10 @@ class HashTable:
     # rehash: the "fallback" function that is called to find a new hash if there is a conflict with the original one
     def rehash(self, oldhash, size):
         return (oldhash + 1) % size  # again, very primitive: just returns oldhash+1 (mod 11).
+
+    # rehashQuad: quadratic probing implementation of rehashing function
+    def rehashQuad(self, oldhash, size, i):
+        return (oldhash + i ** 2) % size
 
     # get: retrieve the value at a given key
     def get(self, key):
