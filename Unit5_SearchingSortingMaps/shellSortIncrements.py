@@ -1,62 +1,64 @@
 import math
 import random
 from timeit import Timer
+from os import system
 
 
+# shell sort implementation
 def shellSort(alist):
-    sublistcount = len(alist) // 2
+    sublistcount = len(alist) // 2  # how many sublists?
     while sublistcount > 0:
-
+        # for each sublist, call a helper function with that as the start position and the required increment
         for startposition in range(sublistcount):
             gapInsertionSort(alist, startposition, sublistcount)
 
-        # print("After increments of size", sublistcount, "The list is", alist)
-
-        sublistcount = sublistcount // 2
+        sublistcount = sublistcount // 2  # halve the count for the next iteration of the loop
 
 
+# modified implementation: use Mersenne numbers, those of the form 2^n - 1, as increments for optimal efficiency
 def shellSortNewIncrements(alist):
     # finding the greatest Mersenne number less than len(alist)
     sublistcount = int(math.pow(2, int(math.log(len(alist), 2)))) - 1
     while sublistcount > 0:
-
+        # same logic here as before
         for startposition in range(sublistcount):
             gapInsertionSort(alist, startposition, sublistcount)
-
-        # print("After increments of size", sublistcount, "The list is", alist)
 
         # making the next lower Mersenne number: add 1 -> perfect power of 2, then divide by 2 and subtract one to
         # make it a Mersenne number again [started with 2^k - 1 --> ending with 2^(k-1) - 1]
         sublistcount = (sublistcount + 1) // 2 - 1
 
 
-def gapInsertionSort(alist, start, gap):
-    for i in range(start + gap, len(alist), gap):
+def gapInsertionSort(alist, start, gap):  # insertion sort, but taking the gap into account
+    for i in range(start + gap, len(alist), gap):  # range object that skips numbers with the given interval
 
         currentvalue = alist[i]
         position = i
-
-        while position >= gap and alist[position - gap] > currentvalue:
+        # sort as normal, scanning through the list and updating the position value as we go
+        while position >= gap and alist[position - gap] > currentvalue:  # have to decrement by 'gap' instead of 1
             alist[position] = alist[position - gap]
             position = position - gap
 
-        alist[position] = currentvalue
+        alist[position] = currentvalue  # same as normal insertion sort
 
 
 # Performance Analysis
 
-original, new = 0, 0
+original, new = 0, 0  # keep track of the total times
 
-for i in range(500):
-    list1 = random.sample(range(1000), 500)
+for i in range(500):  # test on 500 random lists
+    list1 = random.sample(range(1000), 1000)  # each list is 1000 numbers long
     t1 = Timer("shellSort(list1)", "from __main__ import shellSort,list1")
     t2 = Timer("shellSortNewIncrements(list1)", "from __main__ import shellSortNewIncrements,list1")
 
-    original += t1.timeit(10)
+    original += t1.timeit(10)  # time each one 10 times to minimize inconsistencies
     new += t2.timeit(10)
 
-    if i % 5 == 0:
-        print("Loading: " + str(i // 5 + 1) + "%")
+    # provide feedback on the program's progress since it will take a while
+    if i % 5 == 0:  # only increment a percent every 10 iterations since we are going 1000 times
+        system('clear')  # helps create a more seamless loading effect
+        print(f"Loading: {i // 5 + 1}%")  # show how far we are through the script, since it takes a while
+        print("|" + ("=" * (i // 10 + 1)).ljust(50) + "|")  # "progress bar" effect
 
 print("Original Increments: " + str(original))
 print("New Increments:      " + str(new))
