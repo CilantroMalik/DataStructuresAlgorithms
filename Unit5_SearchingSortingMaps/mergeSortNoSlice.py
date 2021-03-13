@@ -1,7 +1,16 @@
 import random
+from timeit import Timer
+from os import system
+
+"""
+--- Merge Sort Without Slice ---
+Implementation of the merge sort algorithm that does not use the Python list slice operator (in other words, it works
+"in place"). This saves memory and significantly reduces the space complexity of the program, but does make it slightly
+less efficient as more work has to be done during the merge step as compared to the traditional implementation.
+"""
 
 
-# normal merge sort implementation: uses slice operator
+# normal merge sort implementation that uses slice operator; included here for comparison
 def mergeSortSlice(alist):
     if len(alist) > 1:  # base case: list has to be larger than one because a one element list is sorted by definition
         mid = len(alist) // 2  # integer midpoint index of the list
@@ -69,3 +78,28 @@ def merge(alist, start1, start2, end2):  # take in the start and end of each sub
 
 def length(start_index, end_index):  # helper function that calculates the length of a list given start and end indices
     return end_index - start_index + 1  # short but reduces clutter and improves readability of the main logic
+
+
+# Performance Analysis
+
+withSlice, noSlice = 0, 0  # keep track of the total times
+
+for i in range(500):  # test on 500 random lists
+    list1 = random.sample(range(5000), 2000)  # each list is 2000 numbers long
+    t1 = Timer("mergeSortSlice(list1)", "from __main__ import mergeSortSlice,list1")
+    t2 = Timer("mergeSort(list1)", "from __main__ import mergeSort,list1")
+
+    withSlice += t1.timeit(10)  # time each one 10 times to minimize inconsistencies
+    noSlice += t2.timeit(10)
+
+    # provide feedback on the program's progress since it will take a while
+    if i % 5 == 0:  # only increment a percent every 10 iterations since we are going 1000 times
+        system('clear')  # helps create a more seamless loading effect
+        print(f"Loading: {i // 5 + 1}%")  # show how far we are through the script, since it takes a while
+        print("|" + ("=" * (i // 10 + 1)).ljust(50) + "|")  # "progress bar" effect
+
+print("With Slice: " + str(withSlice))
+print("No Slice:   " + str(noSlice))
+
+# *** RESULT: Slice wins! ***
+
