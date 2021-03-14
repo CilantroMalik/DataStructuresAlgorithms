@@ -2,6 +2,12 @@ import random
 from timeit import Timer
 from os import system
 
+"""
+--- Selection Sort with Simultaneous Assignment ---
+Implementation of selection sort that takes advantage of Python's simultaneous assignment feature for swapping the
+values of two variables to slightly optimize the selection sort algorithm's use of swaps during the course of its execution.
+At the end, a timed test is included to pit the two versions against each other to measure the effect of the change.
+"""
 
 # standard selection sort implementation: on each pass, finds the largest item in the list and places it in its proper position
 def selectionSort(alist):

@@ -3,6 +3,15 @@ import random
 from timeit import Timer
 from os import system
 
+"""
+--- Shell Sort Increment Experimentation ---
+Provides two implementations of the Shell Sort algorithm with different schemes for how to divide the list into
+sublists for sorting by this algorithm. One of them uses simple division by 2 to come up with the increments, while
+the other uses Mersenne numbers for increments, as these have been mathematically determined to be among the most
+efficient incrementing schemes for this family of algorithm. Otherwise, the logic is identical — each sublist is sorted
+with a slightly modified insertion sort, then the increments are re-computed and the process starts again, and by the end 
+the whole list is sorted. We also include a timed test at the end to compare the two implementations.
+"""
 
 # shell sort implementation
 def shellSort(alist):
