@@ -3,7 +3,11 @@ import random
 
 """
 --- Binary Search Without Slice Operator ---
-
+Implementation of binary search that does not use Python's slice operator to make recursive calls on newly created
+sublists, instead performing the search "in place" by passing start and end indices. This results in significantly
+better time complexity because the slice operation is relatively expensive, and also better space complexity since
+no additional memory is needed to store intermediate lists. The recursive approach is still retained, however.
+This program also includes a timed test that compares the iterative approach and the recursive one with and without slice.
 """
 
 
