@@ -50,7 +50,7 @@ class SortedMap:
                 return
             elif entry.getKey() > k:
                 return
-        self._map.append(MapEntry(k, v))
+        self._insert(MapEntry(k, v))
 
     def __iter__(self):
         return iter(self._map)
@@ -77,7 +77,7 @@ class SortedMap:
 
     def popitem(self):
         item = self._map.pop(0)
-        return (item.getKey(), item.getVal())
+        return item.getKey(), item.getVal()
 
     def clear(self):
         self._map = []
@@ -91,24 +91,30 @@ class SortedMap:
     def items(self):
         return [(entry.getKey(), entry.getVal()) for entry in self._map]
 
+    def _insert(self, item):
+        if not self._map:
+            self._map.append(item)
+            return
+        for i in range(1, len(self._map)):
+            if self._map[i - 1] <= item <= self._map[i]:
+                self._map.insert(i, item)
+                break
+        else:  # edge cases, literally
+            if item < self._map[0]:
+                self._map.insert(0, item)
+            elif item > self._map[len(self._map) - 1]:
+                self._map.insert(len(self._map), item)
+
     def merge(self, other):
         for item in other:
             for entry in self._map:
                 if entry == item:
                     # behavior for conflicting keys
                     break
+                if entry > item:
+                    break
             else:
-                for i in range(1, len(self._map)):
-                    if self._map[i - 1] <= item and self._map[i] >= item:
-                        self._map.insert(i, item)
-                        break
-                else:  # edge cases, literally
-                    if item < self._map[0]:
-                        self._map.insert(0, item)
-                        continue
-                    if item > self._map[len(self._map) - 1]:
-                        self._map.insert(len(self._map), item)
-                        continue
+                self._insert(item)
 
 
 testMap = SortedMap()
