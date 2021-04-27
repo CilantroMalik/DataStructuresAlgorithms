@@ -59,8 +59,8 @@ class SortedMap:
             if entry.getKey() == k:
                 entry.setVal(v)  # if an existing key, we set the value to the provided one
                 return
-            elif entry.getKey() > k:
-                return
+            elif entry.getKey() > k:  # and if we have reached a larger key, we know it is not there (because the keys are sorted)
+                break
         self._insert(MapEntry(k, v))  # if the key does not yet exist, create the key-value pair and insert it at the correct position to preserve sorting
 
     def __iter__(self):  # makes it so that we can iterate over the map like a normal data structure
@@ -131,9 +131,14 @@ class SortedMap:
 testMap = SortedMap()
 testMap[1] = "a"
 testMap[5] = "e"
+print(testMap)
 testMap2 = SortedMap()
 testMap2[2] = "b"
 testMap2[3] = "c"
 testMap2[6] = "f"
+print(testMap2)
+testMap2[6] = "g"
+testMap2[4] = "d"
+print(testMap2)
 testMap.merge(testMap2)
 print(testMap)
