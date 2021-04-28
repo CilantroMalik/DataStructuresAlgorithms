@@ -1,8 +1,8 @@
 """
---- The Map ADT ---
-Implementation of a bare-bones Map ADT that includes all the standard operations such as get, set, delete, contains,
-length, string, and iterator methods, mostly overridden from Python defaults so it can interface more naturally with
-the language. Uses a helper class to encapsulate a map entry, that implements various comparison methods and string.
+--- Sorted Map ---
+Modified implementation of the Map ADT that preserves sorting of its keys and includes a few additional methods such as
+merging two maps together. The sorted properties enable some extra optimizations when searching for a key, which happens
+often in many methods of the map. Also includes a MapEntry class that encapsulates a key/value pair and comparison methods.
 """
 
 
