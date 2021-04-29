@@ -1,3 +1,5 @@
+import os
+
 from sortedMap import SortedMap
 """
 --- SearchEngine ---
@@ -47,16 +49,31 @@ def updateEntry(aMap, key, line, pos):
         aMap[key] = WordEntry(line, pos)
 
 
+def cleanup(aWord):
+    if not aWord[-1].isalpha():
+        return aWord[:-1].lower()
+    return aWord.lower()
+
+
 # -- create a concordance for each article --
 # note: the full corpus concordance will just have word counts, but the individual article ones will store line
 #       number and position information (as this is not really applicable for the large scale concordance)
-fullCorpus = SortedMap()
-masterTable = []
+fullCorpus = SortedMap()  # a map of integers (keys are words, values are their counts)
+masterTable = SortedMap()  # a map of maps (keys are article IDs, values are their concordances)
+progress = 0
 for article in articleDB:
+    os.system("clear")
+    print("Articles scanned:", progress, "out of", len(articleDB))
+    print("=" * int(progress/5))
     localConcordance = SortedMap()
-    for i, line in enumerate(article.split("\n")):
+    for i, line in enumerate(article.getVal().split("\n")):
         for j, word in enumerate(line.split()):
             if not word.lower().islower():
                 continue
-            inc(fullCorpus, word.lower())
-            updateEntry(localConcordance, word.lower(), i, j)
+            processed = cleanup(word)
+            inc(fullCorpus, processed)
+            updateEntry(localConcordance, processed, i, j)
+    masterTable[article.getKey()] = localConcordance
+    progress += 1
+
+print(fullCorpus)
