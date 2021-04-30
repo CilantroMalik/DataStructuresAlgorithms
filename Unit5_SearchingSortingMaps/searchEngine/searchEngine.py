@@ -27,6 +27,9 @@ class WordEntry:
         self.count = 1
         self.locations = [(line, pos)]
 
+    def getCount(self):
+        return self.count
+
     def inc(self):
         self.count += 1
 
@@ -55,6 +58,15 @@ def cleanup(aWord):
     return aWord.lower()
 
 
+def validate(aWord):
+    if not word.lower().islower():
+        return False
+    for char in word:
+        if char.isalpha():
+            return True
+    return False
+
+
 # -- create a concordance for each article --
 # note: the full corpus concordance will just have word counts, but the individual article ones will store line
 #       number and position information (as this is not really applicable for the large scale concordance)
@@ -68,7 +80,7 @@ for article in articleDB:
     localConcordance = SortedMap()
     for i, line in enumerate(article.getVal().split("\n")):
         for j, word in enumerate(line.split()):
-            if not word.lower().islower():
+            if not validate(word):
                 continue
             processed = cleanup(word)
             inc(fullCorpus, processed)
@@ -76,4 +88,59 @@ for article in articleDB:
     masterTable[article.getKey()] = localConcordance
     progress += 1
 
-print(fullCorpus)
+# -- implement search engine algorithm --
+print("— Search the Corpus —")
+query = input("Enter a query: ")
+topResult1, topResult2 = None, None
+if len(query.split(" ")) > 1:  # multi-word query
+    maxCount = 0  # stores the article ID with the most occurrences of a particular multi-word phrase in its entirety
+    for article, concordance in zip(articleDB, masterTable):
+        numOccurrences = article.getVal().count(query)
+        maxCount = numOccurrences if numOccurrences > maxCount else maxCount
+    if maxCount > 0:
+        topResult1 = articleDB[maxCount]
+# single-word queries
+results = []
+for word in query.split(" "):
+    maxOccurrences = 0
+    maxArticle = None
+    for article in articleDB:
+        concordance = masterTable[article.getKey()]
+        try:
+            if concordance[word].getCount() > maxOccurrences:
+                maxArticle = article
+        except KeyError:
+            pass
+    if maxArticle is not None:
+        results.append((maxArticle, maxOccurrences))
+articleWeights = SortedMap()
+for result in results:
+    try:
+        articleWeights[result[0].getKey()] += result[1]
+    except KeyError:
+        articleWeights[result[0].getKey()] = result[1]
+maxWeight, secondMaxWeight = 0, 0
+heaviest, secondHeaviest = None, None
+for item in articleWeights:
+    if item.getVal() > maxWeight:
+        secondMaxWeight = maxWeight
+        secondHeaviest = heaviest
+        maxWeight = item.getVal()
+        heaviest = item.getKey()
+    elif item.getVal() > secondMaxWeight:
+        secondMaxWeight = item.getVal()
+        secondHeaviest = item.getKey()
+if heaviest is None:
+    print("No results.")
+elif secondHeaviest is None:
+    print("Only one result...")
+    topResult1
+else:
+    if topResult1 is None:
+        topResult1 = articleDB[heaviest]
+        topResult2 = articleDB[secondHeaviest]
+    else:
+        topResult2 = articleDB[secondHeaviest]
+
+print("First Result:", topResult1)
+print("Second Result:", topResult2)
