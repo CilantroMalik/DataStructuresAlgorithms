@@ -10,7 +10,7 @@ match a short user query to one of the articles based on word frequencies.
 
 # -- read in and process text file --
 articleDB = SortedMap()
-with open("./News.txt", mode='r') as newsFile:
+with open("./testNews.txt", mode='r') as newsFile:
     fullText = " ".join(newsFile.readlines())
     index = fullText.find("<ID>")
     while index != -1:
@@ -74,9 +74,6 @@ fullCorpus = SortedMap()  # a map of integers (keys are words, values are their 
 masterTable = SortedMap()  # a map of maps (keys are article IDs, values are their concordances)
 progress = 0
 for article in articleDB:
-    os.system("clear")
-    print("Articles scanned:", progress, "out of", len(articleDB))
-    print("=" * int(progress/5))
     localConcordance = SortedMap()
     for i, line in enumerate(article.getVal().split("\n")):
         for j, word in enumerate(line.split()):
@@ -87,6 +84,9 @@ for article in articleDB:
             updateEntry(localConcordance, processed, i, j)
     masterTable[article.getKey()] = localConcordance
     progress += 1
+    os.system("clear")
+    print("Articles scanned:", progress, "out of", len(articleDB))
+    print("=" * int(progress / 5))
 
 # -- implement search engine algorithm --
 print("— Search the Corpus —")
@@ -94,25 +94,30 @@ query = input("Enter a query: ")
 topResult1, topResult2 = None, None
 if len(query.split(" ")) > 1:  # multi-word query
     maxCount = 0  # stores the article ID with the most occurrences of a particular multi-word phrase in its entirety
-    for article, concordance in zip(articleDB, masterTable):
+    for article in articleDB:
         numOccurrences = article.getVal().count(query)
-        maxCount = numOccurrences if numOccurrences > maxCount else maxCount
+        maxCount = article.getKey() if numOccurrences > maxCount else maxCount
     if maxCount > 0:
         topResult1 = articleDB[maxCount]
 # single-word queries
 results = []
 for word in query.split(" "):
-    maxOccurrences = 0
-    maxArticle = None
+    maxOccurrences, secondMaxOccurrences = 0, 0
+    maxArticle, secondMaxArticle = None, None
     for article in articleDB:
         concordance = masterTable[article.getKey()]
         try:
             if concordance[word].getCount() > maxOccurrences:
-                maxArticle = article
+                secondMaxOccurrences, secondMaxArticle = maxOccurrences, maxArticle
+                maxOccurrences, maxArticle = concordance[word].getCount(), article
+            elif concordance[word].getCount() > secondMaxOccurrences:
+                secondMaxOccurrences, secondMaxArticle = concordance[word].getCount(), article
         except KeyError:
             pass
     if maxArticle is not None:
         results.append((maxArticle, maxOccurrences))
+    if secondMaxArticle is not None:
+        results.append((secondMaxArticle, secondMaxOccurrences))
 articleWeights = SortedMap()
 for result in results:
     try:
@@ -134,13 +139,13 @@ if heaviest is None:
     print("No results.")
 elif secondHeaviest is None:
     print("Only one result...")
-    topResult1
+    topResult1 = articleDB[heaviest]
+    print("----------------- First Result -----------------\n", topResult1)
 else:
     if topResult1 is None:
         topResult1 = articleDB[heaviest]
         topResult2 = articleDB[secondHeaviest]
     else:
-        topResult2 = articleDB[secondHeaviest]
-
-print("First Result:", topResult1)
-print("Second Result:", topResult2)
+        topResult2 = articleDB[heaviest] if articleDB[heaviest] != topResult1 else articleDB[secondHeaviest]
+    print("----------------- First Result -----------------\n", topResult1)
+    print("----------------- Second Result -----------------\n", topResult2)
