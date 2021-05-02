@@ -10,7 +10,7 @@ match a short user query to one of the articles based on word frequencies.
 
 # -- read in and process text file --
 articleDB = SortedMap()
-with open("./testNews.txt", mode='r') as newsFile:
+with open("./News.txt", mode='r') as newsFile:
     fullText = " ".join(newsFile.readlines())
     index = fullText.find("<ID>")
     while index != -1:
