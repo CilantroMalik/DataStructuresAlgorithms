@@ -1,6 +1,6 @@
 import os
-
 from sortedMap import SortedMap
+
 """
 --- SearchEngine ---
 Module that reads in a corpus of articles and creates a concordance out of them, an alphabetized list of all words in the
@@ -9,62 +9,64 @@ match a short user query to one of the articles based on word frequencies.
 """
 
 # -- read in and process text file --
-articleDB = SortedMap()
+articleDB = SortedMap()  # store articles in a sorted map, with IDs as keys
 with open("./News.txt", mode='r') as newsFile:
-    fullText = " ".join(newsFile.readlines())
-    index = fullText.find("<ID>")
-    while index != -1:
-        articleId = int(fullText[index+4:fullText.find("</ID>", index)])
-        bodyStart = fullText.find("<BODY>", index)
-        articleText = fullText[bodyStart+6:fullText.find("</BODY>", bodyStart)]
-        articleDB[articleId] = articleText
-        index = fullText.find("<ID>", index+1)
+    fullText = "\n".join(newsFile.readlines())  # create a string containing each line separated by a single newline character
+    index = fullText.find("<ID>")  # locate the first ID tag from which we will read the ID of the first article, as a starting point
+    while index != -1:  # for every single article until we can no longer find another ID tag (i.e. reached the last article)
+        articleId = int(fullText[index+4:fullText.find("</ID>", index)])  # extract the article ID from between the tags as an integer
+        bodyStart = fullText.find("<BODY>", index)  # find the start of the body tag for this article
+        articleText = fullText[bodyStart+6:fullText.find("</BODY>", bodyStart)]  # get all the text after the opening and before the closing body tag
+        articleDB[articleId] = articleText  # add the entry to the map
+        index = fullText.find("<ID>", index+1)  # and prepare for the next iteration by looking for the next opening ID tag
 
 
 # -- helper classes and functions --
-class WordEntry:
+class WordEntry:  # class that stores one entry in a concordance with necessary information
     def __init__(self, line, pos):
-        self.count = 1
-        self.locations = [(line, pos)]
+        self.count = 1  # number of occurrences of this word in the relevant scope
+        self.locations = [(line, pos)]  # locations ("coordinates") in which this word appears in the releavnt scope
 
     def getCount(self):
-        return self.count
+        return self.count  # simple getter method for the property
 
-    def inc(self):
+    def inc(self):  # mostly for convenience; the only time we will ever need to change count is to increment it by one
         self.count += 1
 
-    def addLoc(self, line, pos):
+    def addLoc(self, line, pos):  # adds a location to the internal list specified by a tuple of the line number and position on that line
         self.locations.append((line, pos))
 
 
-def inc(aMap, key):
-    try:
+def inc(aMap, key):  # method that increments the entry in the given map corresponding to the specified key (as a convenience)
+    try:  # if the entry exists, increment it normally
         aMap[key] += 1
-    except KeyError:
+    except KeyError:  # if not, create the entry starting with a value of 1
         aMap[key] = 1
 
 
+# method that adds a location and increments the WordEntry in a concordance; meant to be called for each word while
+# processing an article and handles all the work of keeping concordance information up to date, while improving readability
 def updateEntry(aMap, key, line, pos):
-    try:
+    try:  # if the word exists already, just add the location and increment its counter
         aMap[key].addLoc(line, pos)
         aMap[key].inc()
-    except KeyError:
+    except KeyError:  # if not, make a new WordEntry and assign it; the default count value is 1 and it adds the given location on initialization
         aMap[key] = WordEntry(line, pos)
 
 
-def cleanup(aWord):
-    if not aWord[-1].isalpha():
-        return aWord[:-1].lower()
+def cleanup(aWord):  # another readability-improving method that handles word endings and case sensitivity
+    if not aWord[-1].isalpha():  # if the last character is non-alphanumeric (usually a punctuation mark) remove it
+        return aWord[:-1].lower()  # and always lowercase the word before returning to achieve case-insensitive behavior
     return aWord.lower()
 
 
-def validate(aWord):
-    if not word.lower().islower():
+def validate(aWord):  # method that, along with cleanup, handles empty words and "words" composed of non-alphanumerics
+    if not aWord.lower().islower():  # islower() returns false if there are no cased characters (i.e. letters) so this is a check for empty strings
         return False
-    for char in word:
-        if char.isalpha():
+    for char in aWord:  # checks if there are no letter characters in the word (e.g. for things like '1', '&', etc) that should be skipped
+        if char.isalpha():  # if there is at least one letter, the word is valid
             return True
-    return False
+    return False  # if we have not returned yet, the word is not empty but has no letters so it is invalid
 
 
 # -- create a concordance for each article --
