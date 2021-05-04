@@ -74,33 +74,35 @@ def validate(aWord):  # method that, along with cleanup, handles empty words and
 #       number and position information (as this is not really applicable for the large scale concordance)
 fullCorpus = SortedMap()  # a map of integers (keys are words, values are their counts)
 masterTable = SortedMap()  # a map of maps (keys are article IDs, values are their concordances)
-progress = 0
+progress = 0  # for user feedback, as the process can take a while
 for article in articleDB:
-    localConcordance = SortedMap()
-    for i, line in enumerate(article.getVal().split("\n")):
+    localConcordance = SortedMap()  # will need to create a "local" concordance for every individual article
+    for i, line in enumerate(article.getVal().split("\n")):  # loop through lines and words along with their indices
         for j, word in enumerate(line.split()):
-            if not validate(word):
+            if not validate(word):  # validate the word to see if it should be counted
                 continue
-            processed = cleanup(word)
-            inc(fullCorpus, processed)
-            updateEntry(localConcordance, processed, i, j)
-    masterTable[article.getKey()] = localConcordance
+            processed = cleanup(word)  # preprocess the word with another helper function
+            inc(fullCorpus, processed)  # increment the relevant word's count in the large corpus
+            updateEntry(localConcordance, processed, i, j)  # and add the count and location to the local concordance
+    masterTable[article.getKey()] = localConcordance  # when finished, add the local concordance to the map of maps
     progress += 1
-    os.system("clear")
+    os.system("clear")  # display the progress to the user for transparency
     print("Articles scanned:", progress, "out of", len(articleDB))
     print("=" * int(progress / 5))
 
 # -- implement search engine algorithm --
 print("— Search the Corpus —")
-query = input("Enter a query: ")
-topResult1, topResult2 = None, None
-if len(query.split(" ")) > 1:  # multi-word query
+query = input("Enter a query: ")  # fetch the user query
+topResult1, topResult2 = None, None  # store the results when they are determined
+if len(query.split(" ")) > 1:  # multi-word query handling
     maxCount = 0  # stores the article ID with the most occurrences of a particular multi-word phrase in its entirety
-    for article in articleDB:
-        numOccurrences = article.getVal().count(query)
-        maxCount = article.getKey() if numOccurrences > maxCount else maxCount
-    if maxCount > 0:
-        topResult1 = articleDB[maxCount]
+    maxCountArticle = -1
+    for article in articleDB:  # go through every article and count the occurrences of the entire multi-word phrase
+        numOccurrences = article.getVal().count(query)  # use builtin count method of a string
+        maxCount = article.getKey() if numOccurrences > maxCount else maxCount  # if this is the highest count, store the article key
+    # if no article had any occurrences of the phrase, this isn't a meaningful result; otherwise, this is the top result by default because it's an exact match
+    if maxCountArticle == -1:
+        topResult1 = articleDB[maxCount]  # store the article corresponding to the stored key we arrived at
 # single-word queries
 results = []
 for word in query.split(" "):
