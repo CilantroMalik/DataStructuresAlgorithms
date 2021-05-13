@@ -51,8 +51,7 @@ class SortedMap:
             if entry.getKey() == k:  # found the key --> return the corresponding value
                 return entry.getVal()
             elif entry.getKey() > k:  # current key is greater than target one: take advantage of sorted properties --> key cannot exist
-                break
-        raise KeyError("Error: specified key not present in map.")  # if this point is reached without returning, we throw an error
+                return
 
     def __setitem__(self, k, v):  # add a new key-value pair, or modify an existing one
         for entry in self._map:  # again, find the relevant entry by its key, similar to above
@@ -62,6 +61,15 @@ class SortedMap:
             elif entry.getKey() > k:  # and if we have reached a larger key, we know it is not there (because the keys are sorted)
                 break
         self._insert(MapEntry(k, v))  # if the key does not yet exist, create the key-value pair and insert it at the correct position to preserve sorting
+
+    def __delitem__(self, k):
+      for entry in self._map:
+        if entry.getKey() == k:
+          self._map.remove(entry)
+          return True
+        elif entry.getKey() > k:
+          return False
+      return False
 
     def __iter__(self):  # makes it so that we can iterate over the map like a normal data structure
         return iter(self._map)  # just iterate over our internal list of entries
@@ -79,6 +87,19 @@ class SortedMap:
 
     def __str__(self):  # returns a dictionary-like representation of the items of the map, leveraging MapEntry's str()
         return "{" + ", ".join([str(entry) for entry in self._map]) + "}"
+
+    def get(self, k):  # absolutely unneeded method that has *marginally* different behavior from the builtin. must be having an identity crisis or something
+      if self.__getitem__(k) is not None:
+        return self.__getitem__(k)  # literally invoke the exact same method but builtin...
+      else:
+        raise KeyError("Error: specified key not present in map.")  # the single difference in behavior from the builtin! why does this method exist
+
+    def set(self, k, v):  # another unnecessary method with decidedly nonsensical behavior for a setter method.
+      if self.__contains__(k):  # for some reason if the key exists we entirely disregard the second parameter and set() acts as a getter...?
+        return self.__getitem__(k)
+      else:  # and if the key doesn't exist we actually do normal setting behavior, what a shocker isn't it?
+        self._insert(MapEntry(k, v))
+        return v  # except for some reason we return the value because there's no way that could be one of the parameters we just passed in
 
     def pop(self, k):  # remove and return the element with the given key
         for i in range(len(self._map)):  # iterate over indices since we are modifying the list
@@ -119,12 +140,16 @@ class SortedMap:
                 self._map.insert(len(self._map), item)
 
     def merge(self, other):  # merges two maps together, accounting for possible conflicts
+        newMap = SortedMap()  # create the map that will store the merged map
+        for e in self._map:  # add all elements from this map first, since they will take priority during the merge
+          newMap[e.getKey()] = e.getVal()
         for item in other:  # go through every item in the other map and insert them one by one
-            for entry in self._map:  # for each item, check our map first to see if there is a key conflict
+            for entry in newMap:  # for each item, check our map first to see if there is a key conflict
                 if entry == item:  # for conflicting keys, keep the value from this map: here, that means do nothing
                     break  # this just prevents the else clause from triggering since we don't want to insert anything
             else:  # if the loop exited normally, without breaking (i.e. if a conflict was not found)
-                self._insert(item)  # then insert the item into this map with our helper method
+                newMap[item.getKey()] = item.getVal()  # then insert the item into the new map
+        return newMap  # finally return the new map
 
 
 # -- Testing --
