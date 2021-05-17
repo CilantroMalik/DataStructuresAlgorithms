@@ -38,11 +38,6 @@ class WordEntry:  # class that stores one entry in a concordance with necessary 
 
 
 def inc(aMap, key):  # method that increments the entry in the given map corresponding to the specified key (as a convenience)
-    # OLD BEHAVIOR #
-    # try:  # if the entry exists, increment it normally
-    #     aMap[key] += 1
-    # except KeyError:  # if not, create the entry starting with a value of 1
-    #     aMap[key] = 1
     if aMap[key] is None:
         aMap[key] = 1
     else:
@@ -52,12 +47,6 @@ def inc(aMap, key):  # method that increments the entry in the given map corresp
 # method that adds a location and increments the WordEntry in a concordance; meant to be called for each word while
 # processing an article and handles all the work of keeping concordance information up to date, while improving readability
 def updateEntry(aMap, key, line, pos):
-    # OLD BEHAVIOR #
-    # try:  # if the word exists already, just add the location and increment its counter
-    #     aMap[key].addLoc(line, pos)
-    #     aMap[key].inc()
-    # except KeyError:  # if not, make a new WordEntry and assign it; the default count value is 1 and it adds the given location on initialization
-    #     aMap[key] = WordEntry(line, pos)
     if aMap[key] is None:
         aMap[key] = WordEntry(line, pos)
     else:
@@ -121,16 +110,6 @@ for word in query.split(" "):  # search for each word separately
     maxArticle, secondMaxArticle = None, None  # and corresponding ones for the articles that had those highest counts
     for article in articleDB:  # go through every article and try to find the relevant entry in that article's local concordance
         concordance = masterTable[article.getKey()]  # accessible from our map of maps with the article ID, due to the earlier setup
-        # OLD BEHAVIOR #
-        # try:  # wrap in a try-except because the word may not be in the article at all
-        #     # we want to store the two largest counts of the word, which means we only pick out the articles whose counts are higher than the current stored values
-        #     if concordance[word].getCount() > maxOccurrences:  # use the stored count property of every entry in the concordance
-        #         secondMaxOccurrences, secondMaxArticle = maxOccurrences, maxArticle  # if larger than the max value, push the current max to second highest
-        #         maxOccurrences, maxArticle = concordance[word].getCount(), article  # and then replace the max with this one
-        #     elif concordance[word].getCount() > secondMaxOccurrences:  # if only larger than the second highest but not larger than the highest value
-        #         secondMaxOccurrences, secondMaxArticle = concordance[word].getCount(), article  # just replace the second highest with this article's count
-        # except KeyError:  # if the word doesn't exist, we don't care, so the program just moves on without throwing an error and halting execution
-        #     pass
         if concordance[word] is not None:
             # we want to store the two largest counts of the word, which means we only pick out the articles whose counts are higher than the current stored values
             if concordance[word].getCount() > maxOccurrences:  # use the stored count property of every entry in the concordance
@@ -148,11 +127,6 @@ for word in query.split(" "):  # search for each word separately
 # more than one word; if it was a single word, it effectively behaves like one would expect and finds the simple maximum
 articleWeights = SortedMap()  # store weights in a map
 for result in results:  # go through every result and add the number of occurrences to that article's "score"
-    # OLD BEHAVIOR #
-    # try:
-    #     articleWeights[result[0].getKey()] += result[1]
-    # except KeyError:  # if the key does not exist yet, we assign to it instead of incrementing it
-    #     articleWeights[result[0].getKey()] = result[1]
     if articleWeights[result[0].getKey()] is None:
         articleWeights[result[0].getKey()] = result[1]
     else:
