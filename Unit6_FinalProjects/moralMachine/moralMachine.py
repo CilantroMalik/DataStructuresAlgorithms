@@ -27,20 +27,20 @@ def mapToID(occupant):
 
 # returns a "weight" corresponding to each occupant ID that encapsulates its relative value when deciding whom to save
 def weight(occupant):
-    if occupant == 0:
-        return 7
-    if occupant == 1:
-        return 6
-    if occupant == 2:
-        return 5
-    if occupant == 3:
-        return 7
-    if occupant == 4:
-        return 3
-    if occupant == 5:
-        return 1
-    if occupant == 6:
-        return 2
+    if occupant == 0:  # Infant Child
+        return 7  # highest weight since they are newborn and have their entire life to live
+    if occupant == 1:  # Small Child
+        return 6  # slightly lower than infants but still high for similar reasons
+    if occupant == 2:  # Teenage Child
+        return 5  # similar progression from the previous two for the same reason
+    if occupant == 3:  # Adult
+        return 7  # also highest weight because they are productive members of the workforce and contributors to society
+    if occupant == 4:  # Elderly Adult
+        return 3  # weighted lower because they have already made their contribution and are now a net negative value proposition
+    if occupant == 5:  # Small animal
+        return 1  # lowest weight because although we do still love our animals, they should be less important than humans
+    if occupant == 6:  # Large animal
+        return 2  # slightly higher because a large animal could be livestock for example, which has more value in an objective sense
 
 
 # main function that encapsulates the algorithm that chooses the action the car will take
@@ -70,8 +70,8 @@ def moralBrake(carOccupants: list, crosswalkOccupants: list, greenLight: bool):
             driveStraight = weightsCar > weightsCrosswalk
     # -> Case 2: pedestrians flouting the law
     else:
-        # Sub-case 2a: same number of humans & animals
-        pass  # TODO finish this
+        # If the weights for the groups are within 2 of each other, kill the law-breakers; if not, save whoever is weighted higher
+        driveStraight = True if abs(weightsCar - weightsCrosswalk) <= 2 else (weightsCar > weightsCrosswalk)
 
     # finally, finish off the function
     return (
