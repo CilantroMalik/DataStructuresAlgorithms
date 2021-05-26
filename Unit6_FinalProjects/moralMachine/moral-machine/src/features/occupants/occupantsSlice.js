@@ -2,8 +2,8 @@ import { createSlice } from '@reduxjs/toolkit';
 
 // for the testing build, start off with a placeholder configuration
 const initialState = {
-    car: ["Infant Child", "Small animal"],
-    crosswalk: ["Elderly adult", "Adult"]
+    "car": ["Infant Child", "Small animal"],
+    "crosswalk": ["Elderly adult", "Adult"]
 }
 
 // create a slice to handle adding and removing occupants
