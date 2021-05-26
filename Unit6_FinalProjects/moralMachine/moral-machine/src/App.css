@@ -3,3 +3,12 @@
   background-color: #2D2D2D;
   color: antiquewhite;
 }
+
+.buttonContainer {
+  display: flex;
+  flex-direction: row;
+}
+
+.buttonContainer > * {
+  flex-basis: 50%;
+}

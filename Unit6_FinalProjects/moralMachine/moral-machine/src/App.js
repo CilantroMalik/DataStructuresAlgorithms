@@ -6,7 +6,10 @@ import './App.css';
 function App() {
     return (
         <div className="App">
-            <AddOccupants destination="car"/>
+            <div className="buttonContainer">
+                <AddOccupants destination="car"/>
+                <AddOccupants destination="crosswalk"/>
+            </div>
             <OccupantsView />
         </div>
     )
