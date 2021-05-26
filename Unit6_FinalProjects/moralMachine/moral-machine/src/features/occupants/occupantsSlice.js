@@ -13,8 +13,16 @@ const occupantsSlice = createSlice({
     reducers: {
         addToCar(state, action) { state.car.push(action.payload) },
         addToCrosswalk(state, action) { state.crosswalk.push(action.payload) },
-        removeFromCar(state, action) { state.car.splice(state.car.findIndex(i => i === action.payload), 1) },
-        removeFromCrosswalk(state, action) { state.crosswalk.splice(state.crosswalk.findIndex(i => i === action.payload), 1) }
+        removeFromCar(state, action) {
+            if (state.car.findIndex(i => i === action.payload) !== -1) {
+                state.car.splice(state.car.findIndex(i => i === action.payload), 1)
+            }
+        },
+        removeFromCrosswalk(state, action) {
+            if (state.crosswalk.findIndex(i => i === action.payload) !== -1) {
+                state.crosswalk.splice(state.crosswalk.findIndex(i => i === action.payload), 1)
+            }
+        }
     }
 })
 
