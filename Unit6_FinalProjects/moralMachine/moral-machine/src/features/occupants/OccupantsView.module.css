@@ -10,3 +10,15 @@
 .fadeIn {
     animation: fadeInKeys 1s ease-in-out;
 }
+
+.occupantName {
+    color: antiquewhite;
+}
+
+.occupantList {
+    border: 2px solid antiquewhite;
+    border-radius: 20px;
+    padding: 20px;
+    margin-right: 15px;
+    flex-basis: 40%;
+}
