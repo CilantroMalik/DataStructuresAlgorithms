@@ -9,12 +9,12 @@ export const OccupantsView = () => {
     const crosswalkOccupants = useSelector(state => state.occupants.crosswalk)
 
     const carList = carOccupants.map(entity => (
-        <div key={nanoid()} className={styles.fadeIn}>
+        <div key={nanoid()}>
             <h3 className={styles.occupantName} key={nanoid()}>{entity}</h3>
         </div>
     ))
     const crosswalkList = crosswalkOccupants.map(entity => (
-        <div key={nanoid()} className={styles.fadeIn}>
+        <div key={nanoid()}>
             <h3 className={styles.occupantName}>{entity}</h3>
         </div>
     ))

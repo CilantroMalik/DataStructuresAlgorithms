@@ -5,7 +5,8 @@ export const MoralBrake = () => {
 
     const carOccupants = useSelector(state => state.occupants.car)
     const crosswalkOccupants = useSelector(state => state.occupants.crosswalk)
-    const [result, setResult] = useState("")
+    const light = useSelector(state => state.light.green)
+    const [result, setResult] = useState("(Decision will appear here once simulation is run.)")
 
     const onSimulateClicked = () => {
         let xmlHttp = new XMLHttpRequest();
@@ -33,14 +34,14 @@ export const MoralBrake = () => {
             else if (o === "Small animal") { crosswalkQuery += "5" }
             else if (o === "Large animal") { crosswalkQuery += "6" }
         }
-        xmlHttp.open("GET", `http://localhost:8888/api/selfDriving/moralBrake?car=${carQuery}&crosswalk=${crosswalkQuery}&green=1`, true); // true for asynchronous
+        xmlHttp.open("GET", `http://localhost:8888/api/selfDriving/moralBrake?car=${carQuery}&crosswalk=${crosswalkQuery}&green=${light ? "1" : "0"}`, true); // true for asynchronous
         xmlHttp.send(null);
     }
 
     return (
         <>
             <button onClick={onSimulateClicked} className="accent-button">Simulate Self-Driving Car</button>
-            <h3 style={{color: "antiquewhite"}}>{result}</h3>
+            <h3 style={{border: "2px solid antiquewhite", borderRadius: "12px", padding: "5px", margin: "20px", color: "antiquewhite"}}>{result}</h3>
         </>
     )
 }
