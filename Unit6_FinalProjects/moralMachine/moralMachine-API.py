@@ -34,7 +34,7 @@ def moralBrake(carOccupants: list, crosswalkOccupants: list, greenLight: bool):
 
     # finally, finish off the function
     return (
-        "The vehicle will maintain its current course to drive through the intersection" if driveStraight
+        "The vehicle will maintain its current course to drive through the intersection." if driveStraight
         else "The vehicle will change its course to drive into the barricade."
     )  # convert the boolean to the corresponding string output for what action the car will take
 
