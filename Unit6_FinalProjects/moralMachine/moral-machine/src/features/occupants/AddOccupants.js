@@ -22,12 +22,12 @@ export const AddOccupants = (props) => {
 
     return (
         <div className={styles.buttonGroup}>
-            <h2 style={{color: "antiquewhite", marginLeft: props.destination === "car" ? "11%" : "-17%"}}>
+            <h2 style={{color: "antiquewhite", marginLeft: props.destination === "car" ? "30%" : "-9%"}}>
                 Add to {props.destination === "car" ? "Car" : "Crosswalk"}
             </h2>
 
             <div className="flex-row" style={{justifyContent: "center"}}>
-                <div style={{display: "flex", flexFlow: "column wrap", marginLeft: props.destination === "car" ? "11%" : "-17%"}}>
+                <div style={{display: "flex", flexFlow: "column wrap", marginLeft: props.destination === "car" ? "30%" : "-9%"}}>
                     <button onClick={() => onButtonClicked("Infant Child")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Infant Child</button>
                     <button onClick={() => onButtonClicked("Small Child")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Small Child</button>
                     <button onClick={() => onButtonClicked("Teenage Child")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Teenage Child</button>

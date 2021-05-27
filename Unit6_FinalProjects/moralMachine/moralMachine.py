@@ -70,7 +70,7 @@ def moralBrake(carOccupants: list, crosswalkOccupants: list, greenLight: bool):
             driveStraight = weightsCar > weightsCrosswalk
     # -> Case 2: pedestrians flouting the law
     else:
-        # If the weights for the groups are within 2 of each other, kill the law-breakers; if not, save whoever is weighted higher
+        # If the weights for the groups are within 2 of each other, kill the law-breakers; if not, save the higher weighted group
         driveStraight = True if abs(weightsCar - weightsCrosswalk) <= 2 else (weightsCar > weightsCrosswalk)
 
     # finally, finish off the function
