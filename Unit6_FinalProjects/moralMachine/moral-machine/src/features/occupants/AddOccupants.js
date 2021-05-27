@@ -1,11 +1,24 @@
 import React from 'react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import { addToCar, addToCrosswalk, removeFromCar, removeFromCrosswalk } from "./occupantsSlice";
 import styles from './AddOccupants.module.css';
 import '../../main.css';
 
 export const AddOccupants = (props) => {
 
-    // TODO actually implement adding and removing functionality on button clicks
+    const dispatch = useDispatch()
+    const [removing, setRemoving] = useState(false)
+
+    const onButtonClicked = (entity) => {
+        if (removing) {
+            if (props.destination === "car") { dispatch(removeFromCar(entity)) }
+            else { dispatch(removeFromCrosswalk(entity)) }
+        } else {
+            if (props.destination === "car") { dispatch(addToCar(entity)) }
+            else { dispatch(addToCrosswalk(entity)) }
+        }
+    }
 
     return (
         <div className={styles.buttonGroup}>
@@ -15,16 +28,19 @@ export const AddOccupants = (props) => {
 
             <div className="flex-row" style={{justifyContent: "center"}}>
                 <div style={{display: "flex", flexFlow: "column wrap", marginLeft: props.destination === "car" ? "11%" : "-17%"}}>
-                    <button style={{margin: "6px"}}>Infant Child</button>
-                    <button style={{margin: "6px"}}>Small Child</button>
-                    <button style={{margin: "6px"}}>Teenage Child</button>
-                    <button style={{margin: "6px"}}>Adult</button>
+                    <button onClick={() => onButtonClicked("Infant Child")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Infant Child</button>
+                    <button onClick={() => onButtonClicked("Small Child")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Small Child</button>
+                    <button onClick={() => onButtonClicked("Teenage Child")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Teenage Child</button>
+                    <button onClick={() => onButtonClicked("Adult")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Adult</button>
                 </div>
                 <div style={{display: "flex", flexFlow: "column wrap"}}>
-                    <button style={{margin: "6px"}}>Elderly Adult</button>
-                    <button style={{margin: "6px"}}>Small Animal</button>
-                    <button style={{margin: "6px"}}>Large Animal</button>
-                    <button style={{backgroundColor: "red", borderColor: "red", margin: "6px"}}>Remove</button>
+                    <button onClick={() => onButtonClicked("Elderly Adult")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Elderly Adult</button>
+                    <button onClick={() => onButtonClicked("Small animal")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Small animal</button>
+                    <button onClick={() => onButtonClicked("Large animal")} className={removing ? "muted-button" : ""} style={{margin: "6px"}}>Large animal</button>
+                    <button onClick={() => setRemoving(!removing)}
+                            style={removing ? {margin: "6px"} : {backgroundColor: "red", borderColor: "red", margin: "6px"}}>
+                        {removing ? "Add" : "Remove"}
+                    </button>
                 </div>
             </div>
         </div>
