@@ -1,6 +1,8 @@
 import React from 'react';
 import { OccupantsView } from "./features/occupants/OccupantsView";
 import { AddOccupants } from "./features/occupants/AddOccupants";
+import { MoralBrake } from "./features/api/MoralBrake";
+import { LightController } from "./features/light/LightController"
 import './App.css';
 
 function App() {
@@ -8,9 +10,12 @@ function App() {
         <div className="App">
             <div className="buttonContainer">
                 <AddOccupants destination="car"/>
+                <div className="lightButton"><LightController/></div>
                 <AddOccupants destination="crosswalk"/>
             </div>
-            <OccupantsView />
+            <OccupantsView/>
+            <br/>
+            <MoralBrake/>
         </div>
     )
 }

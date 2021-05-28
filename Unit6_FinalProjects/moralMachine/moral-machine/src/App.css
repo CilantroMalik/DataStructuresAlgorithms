@@ -10,5 +10,11 @@
 }
 
 .buttonContainer > * {
-  flex-basis: 50%;
+  flex-basis: 40%;
+}
+
+.lightButton {
+  flex-basis: 15%;
+  height: 50px;
+  margin-top: 16rem;
 }
