@@ -6,7 +6,7 @@ const initialState = {
     "crosswalk": ["Elderly Adult", "Adult"]
 }
 
-// create a slice to handle adding and removing occupants
+// create a slice to handle adding and removing occupants, with four actions for add/remove and car/crosswalk
 const occupantsSlice = createSlice({
     name: 'occupants',
     initialState,

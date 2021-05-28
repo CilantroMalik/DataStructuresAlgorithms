@@ -1,9 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // for the testing build, start off with a placeholder configuration
-const initialState = {"green": true}
+const initialState = {"green": true} // make an object since primitive types don't interact well with Immer
 
-// create a slice to handle adding and removing occupants
+// create a slice to track whether the light is red or green, with a single method to toggle the state
 const lightSlice = createSlice({
     name: 'light',
     initialState,
