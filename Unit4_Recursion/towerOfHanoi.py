@@ -78,4 +78,4 @@ def pole(aPole):
     return "left" if aPole == pole1 else ("middle" if aPole == pole2 else "right")
 
 
-solveHanoi(4)  # can test for any number of disks, but for the computer's sake, don't go too high.
+solveHanoi(5)  # can test for any number of disks, but for the computer's sake, don't go too high.

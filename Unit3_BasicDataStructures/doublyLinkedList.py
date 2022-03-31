@@ -6,7 +6,7 @@ This opens up access from both ends of the list rather than only the front and g
 """
 
 
-class DoublyList:
+class DoublyLinkedList:
     # inner class for a node in the list
     class Node:
         # all the methods are fairly self explanatory: initializer then getters and setters for the three fields

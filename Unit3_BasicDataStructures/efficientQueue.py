@@ -1,4 +1,4 @@
-from doublyLinkedList import DoublyList
+from doublyLinkedList import DoublyLinkedList
 
 """
 --- O(1) Queue ---
@@ -12,7 +12,7 @@ the other implementations; the only improvements are that we now use a DLL under
 class Queue:
     # initialize an empty queue (here represented by a doubly linked list)
     def __init__(self):
-        self.__queue = DoublyList()
+        self.__queue = DoublyLinkedList()
 
     def enqueue(self, item):
         # use append since we are adding to the end of the list (rear of queue).
